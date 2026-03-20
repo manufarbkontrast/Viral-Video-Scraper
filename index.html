@@ -1,0 +1,3235 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feldstation - Wildlife Channel Monitor</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   TOKEN SYSTEM — Domain-inspired design tokens
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  /* Depth layers */
+  --abyss: #0a0e14;
+  --deep: #111820;
+  --shelf: #1a2230;
+  --drift: #222d3d;
+  --cavity: #2a3649;
+
+  /* Signal colors */
+  --signal: #22d3ee;
+  --signal-dim: rgba(34, 211, 238, 0.15);
+  --signal-glow: rgba(34, 211, 238, 0.4);
+  --discovery: #f59e0b;
+  --discovery-dim: rgba(245, 158, 11, 0.15);
+  --discovery-glow: rgba(245, 158, 11, 0.5);
+  --growth: #34d399;
+  --growth-dim: rgba(52, 211, 153, 0.15);
+  --decline: #ef4444;
+  --decline-dim: rgba(239, 68, 68, 0.15);
+  --idea: #a78bfa;
+  --idea-dim: rgba(167, 139, 250, 0.15);
+  --idea-glow: rgba(167, 139, 250, 0.4);
+
+  /* Text hierarchy */
+  --bone: #e8edf4;
+  --sediment: #94a3b8;
+  --fossil: #526580;
+
+  /* Borders */
+  --reef: rgba(148, 163, 184, 0.08);
+  --trench: rgba(148, 163, 184, 0.18);
+
+  /* Spacing */
+  --unit: 8px;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  /* Radius */
+  --radius: 4px;
+  --radius-lg: 6px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════════════ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--abyss);
+  color: var(--bone);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--deep); }
+::-webkit-scrollbar-thumb { background: var(--fossil); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--sediment); }
+
+/* ═══════════════════════════════════════════════════════════════
+   LAYOUT
+   ═══════════════════════════════════════════════════════════════ */
+.app {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: calc(var(--unit) * 2) calc(var(--unit) * 3);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════════════════════════ */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(var(--unit) * 2) 0;
+  border-bottom: 1px solid var(--reef);
+  margin-bottom: calc(var(--unit) * 3);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 1.5);
+}
+
+.header-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--trench);
+  border-radius: var(--radius);
+  background: var(--shelf);
+  color: var(--signal);
+  font-size: 18px;
+}
+
+.header-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--bone);
+}
+
+.header-subtitle {
+  font-size: 0.78rem;
+  color: var(--fossil);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: -2px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 2);
+}
+
+.header-timestamp {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--fossil);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--trench);
+  border-radius: var(--radius);
+  background: var(--shelf);
+  color: var(--sediment);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  background: var(--drift);
+  color: var(--bone);
+  border-color: var(--fossil);
+}
+
+.btn-primary {
+  background: rgba(34, 211, 238, 0.1);
+  border-color: rgba(34, 211, 238, 0.3);
+  color: var(--signal);
+}
+
+.btn-primary:hover {
+  background: rgba(34, 211, 238, 0.2);
+  border-color: rgba(34, 211, 238, 0.5);
+}
+
+.btn-icon {
+  padding: 8px;
+  min-width: 36px;
+  justify-content: center;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   KPI CARDS
+   ═══════════════════════════════════════════════════════════════ */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: calc(var(--unit) * 2);
+  margin-bottom: calc(var(--unit) * 3);
+}
+
+.kpi-card {
+  background: var(--deep);
+  border: 1px solid var(--reef);
+  border-radius: var(--radius);
+  padding: calc(var(--unit) * 2.5) calc(var(--unit) * 2.5);
+}
+
+.kpi-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--fossil);
+  margin-bottom: calc(var(--unit) * 0.5);
+}
+
+.kpi-value {
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--bone);
+  line-height: 1.2;
+}
+
+.kpi-value.signal { color: var(--signal); }
+.kpi-value.discovery { color: var(--discovery); }
+.kpi-value.growth { color: var(--growth); }
+
+.kpi-sub {
+  font-size: 0.75rem;
+  color: var(--sediment);
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TABS
+   ═══════════════════════════════════════════════════════════════ */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--reef);
+  margin-bottom: calc(var(--unit) * 3);
+}
+
+.tab {
+  padding: calc(var(--unit) * 1.5) calc(var(--unit) * 3);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--fossil);
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-sans);
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s ease;
+  letter-spacing: -0.01em;
+}
+
+.tab:hover { color: var(--sediment); }
+
+.tab.active {
+  color: var(--signal);
+  border-bottom-color: var(--signal);
+}
+
+.tab-badge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  background: var(--shelf);
+  border: 1px solid var(--reef);
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 6px;
+  color: var(--sediment);
+}
+
+.tab.active .tab-badge {
+  background: var(--signal-dim);
+  border-color: rgba(34, 211, 238, 0.3);
+  color: var(--signal);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CHANNEL TABLE
+   ═══════════════════════════════════════════════════════════════ */
+.panel {
+  display: none;
+}
+
+.panel.active {
+  display: block;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--reef);
+  border-radius: var(--radius);
+}
+
+.channel-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.channel-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.channel-table th {
+  background: var(--shelf);
+  border-bottom: 1px solid var(--trench);
+  padding: calc(var(--unit) * 1.5) calc(var(--unit) * 2);
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fossil);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+.channel-table th:hover { color: var(--sediment); }
+
+.channel-table th.sorted { color: var(--signal); }
+
+.channel-table th .sort-arrow {
+  margin-left: 4px;
+  opacity: 0.4;
+  font-size: 0.65rem;
+}
+
+.channel-table th.sorted .sort-arrow { opacity: 1; }
+
+.channel-table td {
+  padding: calc(var(--unit) * 1.2) calc(var(--unit) * 2);
+  border-bottom: 1px solid var(--reef);
+  vertical-align: middle;
+}
+
+.channel-table tbody tr {
+  transition: background 0.1s;
+}
+
+.channel-table tbody tr:hover {
+  background: rgba(34, 211, 238, 0.03);
+}
+
+.channel-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.channel-cell {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 1.5);
+}
+
+.channel-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius);
+  border: 1px solid var(--reef);
+  background: var(--shelf);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--signal);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.channel-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.channel-name {
+  font-weight: 600;
+  color: var(--bone);
+  white-space: nowrap;
+}
+
+.channel-handle {
+  font-size: 0.7rem;
+  color: var(--fossil);
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.trend-up { color: var(--growth); }
+.trend-down { color: var(--decline); }
+.trend-neutral { color: var(--fossil); }
+
+/* ═══════════════════════════════════════════════════════════════
+   VIRAL FEED
+   ═══════════════════════════════════════════════════════════════ */
+.viral-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: calc(var(--unit) * 2);
+}
+
+.viral-card {
+  background: var(--deep);
+  border: 1px solid var(--reef);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  cursor: pointer;
+}
+
+.viral-card:hover {
+  border-color: var(--trench);
+  transform: translateY(-1px);
+}
+
+.viral-card:visited { color: inherit; }
+
+.viral-card.tier-mega { border-color: rgba(245, 158, 11, 0.3); }
+.viral-card.tier-hot { border-color: rgba(34, 211, 238, 0.2); }
+
+.viral-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--shelf);
+  position: relative;
+  overflow: hidden;
+}
+
+.viral-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.viral-views-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius);
+  background: rgba(10, 14, 20, 0.85);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--trench);
+}
+
+.viral-views-badge.mega {
+  color: var(--discovery);
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 12px var(--discovery-glow);
+}
+
+.viral-views-badge.hot {
+  color: var(--signal);
+  border-color: rgba(34, 211, 238, 0.3);
+  box-shadow: 0 0 8px var(--signal-glow);
+}
+
+.viral-views-badge.warm {
+  color: var(--bone);
+}
+
+.format-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: var(--radius);
+  background: rgba(10, 14, 20, 0.85);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--trench);
+}
+
+.format-short {
+  color: var(--discovery);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.format-long {
+  color: var(--signal);
+  border-color: rgba(34, 211, 238, 0.2);
+}
+
+.viral-duration {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: var(--radius);
+  background: rgba(10, 14, 20, 0.85);
+  color: var(--sediment);
+}
+
+.viral-body {
+  padding: calc(var(--unit) * 2);
+}
+
+.viral-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--bone);
+  line-height: 1.4;
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.viral-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--unit);
+}
+
+.viral-channel {
+  font-size: 0.75rem;
+  color: var(--sediment);
+  font-weight: 500;
+}
+
+.viral-stats {
+  display: flex;
+  gap: calc(var(--unit) * 2);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--fossil);
+}
+
+.viral-stat {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.viral-date {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--fossil);
+  margin-top: 6px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   IDEAS PANEL
+   ═══════════════════════════════════════════════════════════════ */
+.idea-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: calc(var(--unit) * 2);
+}
+
+.idea-card {
+  background: var(--deep);
+  border: 1px solid var(--reef);
+  border-radius: var(--radius);
+  padding: calc(var(--unit) * 2.5);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.idea-card:hover {
+  border-color: rgba(167, 139, 250, 0.3);
+  background: rgba(167, 139, 250, 0.03);
+}
+
+.idea-rank {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--idea);
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.idea-topic {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--bone);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.idea-angle {
+  font-size: 0.8rem;
+  color: var(--sediment);
+  line-height: 1.5;
+  margin-bottom: calc(var(--unit) * 1.5);
+  font-style: italic;
+}
+
+.idea-metrics {
+  display: flex;
+  gap: calc(var(--unit) * 2);
+  margin-bottom: calc(var(--unit) * 1.5);
+}
+
+.idea-metric {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--fossil);
+}
+
+.idea-metric-value {
+  color: var(--idea);
+  font-weight: 600;
+}
+
+.idea-sources {
+  border-top: 1px solid var(--reef);
+  padding-top: calc(var(--unit) * 1.5);
+}
+
+.idea-source-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fossil);
+  margin-bottom: 4px;
+}
+
+.idea-source-item {
+  font-size: 0.72rem;
+  color: var(--sediment);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.6;
+}
+
+.idea-cta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: calc(var(--unit) * 1.5);
+  font-size: 0.75rem;
+  color: var(--idea);
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCRIPT GENERATION MODAL
+   ═══════════════════════════════════════════════════════════════ */
+.script-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  background: rgba(10, 14, 20, 0.9);
+  backdrop-filter: blur(6px);
+  overflow-y: auto;
+  padding: calc(var(--unit) * 4) calc(var(--unit) * 2);
+}
+
+.script-overlay.active { display: block; }
+
+.script-modal {
+  background: var(--deep);
+  border: 1px solid var(--trench);
+  border-radius: var(--radius-lg);
+  max-width: 900px;
+  margin: 0 auto;
+  padding: calc(var(--unit) * 4);
+}
+
+.script-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: calc(var(--unit) * 2);
+  margin-bottom: calc(var(--unit) * 3);
+  padding-bottom: calc(var(--unit) * 2);
+  border-bottom: 1px solid var(--reef);
+}
+
+.script-topic {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--bone);
+  letter-spacing: -0.02em;
+}
+
+.script-topic-sub {
+  font-size: 0.8rem;
+  color: var(--fossil);
+  margin-top: 4px;
+}
+
+.script-section {
+  margin-bottom: calc(var(--unit) * 3);
+}
+
+.script-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: calc(var(--unit) * 1.5);
+}
+
+.script-section-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--idea);
+}
+
+.script-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: 1px solid var(--reef);
+  border-radius: var(--radius);
+  background: var(--shelf);
+  color: var(--fossil);
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.script-copy-btn:hover {
+  color: var(--bone);
+  border-color: var(--trench);
+}
+
+.script-content {
+  background: var(--abyss);
+  border: 1px solid var(--reef);
+  border-radius: var(--radius);
+  padding: calc(var(--unit) * 2);
+  font-size: 0.82rem;
+  color: var(--bone);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.script-loading {
+  text-align: center;
+  padding: calc(var(--unit) * 8);
+  color: var(--fossil);
+}
+
+.script-loading-spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--reef);
+  border-top-color: var(--idea);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: calc(var(--unit) * 2);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.script-loading-text {
+  font-size: 0.85rem;
+  color: var(--sediment);
+}
+
+.script-error {
+  text-align: center;
+  padding: calc(var(--unit) * 4);
+  color: var(--decline);
+  font-size: 0.85rem;
+}
+
+.script-actions {
+  display: flex;
+  gap: var(--unit);
+  justify-content: flex-end;
+  padding-top: calc(var(--unit) * 2);
+  border-top: 1px solid var(--reef);
+}
+
+/* Audio player */
+.audio-section {
+  margin-bottom: calc(var(--unit) * 3);
+  padding: calc(var(--unit) * 2.5);
+  background: var(--shelf);
+  border: 1px solid var(--reef);
+  border-radius: var(--radius);
+}
+
+.audio-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: calc(var(--unit) * 2);
+}
+
+.audio-section-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--growth);
+}
+
+.audio-controls {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 1.5);
+}
+
+.audio-player {
+  width: 100%;
+  height: 36px;
+  border-radius: var(--radius);
+  outline: none;
+}
+
+.audio-player::-webkit-media-controls-panel {
+  background: var(--deep);
+}
+
+.audio-download-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--growth);
+  text-decoration: none;
+  padding: 6px 12px;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  border-radius: var(--radius);
+  background: var(--growth-dim);
+  transition: all 0.15s;
+}
+
+.audio-download-link:hover {
+  background: rgba(52, 211, 153, 0.2);
+  border-color: rgba(52, 211, 153, 0.5);
+}
+
+.audio-progress {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 1.5);
+  padding: calc(var(--unit) * 2) 0;
+}
+
+.audio-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--deep);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.audio-progress-fill {
+  height: 100%;
+  background: var(--growth);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px var(--growth-dim);
+}
+
+.audio-progress-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--sediment);
+  white-space: nowrap;
+}
+
+.btn-tts {
+  background: var(--growth-dim);
+  border-color: rgba(52, 211, 153, 0.3);
+  color: var(--growth);
+}
+
+.btn-tts:hover {
+  background: rgba(52, 211, 153, 0.2);
+  border-color: rgba(52, 211, 153, 0.5);
+}
+
+.btn-idea {
+  background: var(--idea-dim);
+  border-color: rgba(167, 139, 250, 0.3);
+  color: var(--idea);
+}
+
+.btn-idea:hover {
+  background: rgba(167, 139, 250, 0.2);
+  border-color: rgba(167, 139, 250, 0.5);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROGRESS BAR
+   ═══════════════════════════════════════════════════════════════ */
+.progress-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(10, 14, 20, 0.8);
+  backdrop-filter: blur(4px);
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-overlay.active { display: flex; }
+
+.progress-box {
+  background: var(--deep);
+  border: 1px solid var(--trench);
+  border-radius: var(--radius-lg);
+  padding: calc(var(--unit) * 4) calc(var(--unit) * 5);
+  min-width: 400px;
+  text-align: center;
+}
+
+.progress-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: calc(var(--unit) * 2);
+  color: var(--bone);
+}
+
+.progress-bar-track {
+  width: 100%;
+  height: 4px;
+  background: var(--shelf);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: calc(var(--unit) * 1.5);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--signal);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px var(--signal-glow);
+}
+
+.progress-label {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--sediment);
+}
+
+.progress-cancel {
+  margin-top: calc(var(--unit) * 2);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MODAL
+   ═══════════════════════════════════════════════════════════════ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(10, 14, 20, 0.85);
+  backdrop-filter: blur(6px);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active { display: flex; }
+
+.modal {
+  background: var(--deep);
+  border: 1px solid var(--trench);
+  border-radius: var(--radius-lg);
+  padding: calc(var(--unit) * 4);
+  width: 480px;
+  max-width: 90vw;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: calc(var(--unit) * 3);
+}
+
+.modal-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--fossil);
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 4px;
+  line-height: 1;
+}
+
+.modal-close:hover { color: var(--bone); }
+
+.form-group {
+  margin-bottom: calc(var(--unit) * 2.5);
+}
+
+.form-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fossil);
+  margin-bottom: calc(var(--unit) * 0.8);
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--shelf);
+  border: 1px solid var(--trench);
+  border-radius: var(--radius);
+  color: var(--bone);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.form-input:focus {
+  border-color: var(--signal);
+  box-shadow: 0 0 0 2px var(--signal-dim);
+}
+
+.form-hint {
+  font-size: 0.72rem;
+  color: var(--fossil);
+  margin-top: 4px;
+}
+
+.form-range-wrap {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 2);
+}
+
+.form-range {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--shelf);
+  border-radius: 2px;
+  outline: none;
+}
+
+.form-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--signal);
+  border: 2px solid var(--deep);
+  cursor: pointer;
+}
+
+.form-range-value {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--signal);
+  min-width: 60px;
+  text-align: right;
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--unit);
+  justify-content: flex-end;
+  margin-top: calc(var(--unit) * 3);
+  padding-top: calc(var(--unit) * 2);
+  border-top: 1px solid var(--reef);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════════ */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(var(--unit) * 2) 0;
+  margin-top: calc(var(--unit) * 4);
+  border-top: 1px solid var(--reef);
+  font-size: 0.72rem;
+  color: var(--fossil);
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 3);
+}
+
+.quota-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.quota-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--growth);
+}
+
+.quota-dot.warn { background: var(--discovery); }
+.quota-dot.critical { background: var(--decline); }
+
+/* ═══════════════════════════════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════════════════════════════ */
+.empty-state {
+  text-align: center;
+  padding: calc(var(--unit) * 8) calc(var(--unit) * 4);
+  color: var(--fossil);
+}
+
+.empty-state-icon {
+  font-size: 2.5rem;
+  margin-bottom: calc(var(--unit) * 2);
+  opacity: 0.5;
+}
+
+.empty-state-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--sediment);
+  margin-bottom: var(--unit);
+}
+
+.empty-state-desc {
+  font-size: 0.82rem;
+  max-width: 400px;
+  margin: 0 auto calc(var(--unit) * 3);
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ERROR TOAST
+   ═══════════════════════════════════════════════════════════════ */
+.toast-container {
+  position: fixed;
+  top: calc(var(--unit) * 2);
+  right: calc(var(--unit) * 2);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: var(--unit);
+}
+
+.toast {
+  background: var(--drift);
+  border: 1px solid var(--trench);
+  border-radius: var(--radius);
+  padding: calc(var(--unit) * 1.5) calc(var(--unit) * 2);
+  font-size: 0.8rem;
+  color: var(--bone);
+  max-width: 400px;
+  animation: toast-in 0.2s ease;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--unit);
+}
+
+.toast.error { border-left: 3px solid var(--decline); }
+.toast.success { border-left: 3px solid var(--growth); }
+.toast.warn { border-left: 3px solid var(--discovery); }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 1200px) {
+  .kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .app {
+    padding: var(--unit) calc(var(--unit) * 2);
+  }
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .header {
+    flex-wrap: wrap;
+    gap: var(--unit);
+  }
+  .viral-grid,
+  .idea-grid {
+    grid-template-columns: 1fr;
+  }
+  .script-modal {
+    padding: calc(var(--unit) * 2);
+  }
+  .script-content {
+    max-height: 300px;
+  }
+  .kpi-value { font-size: 1.4rem; }
+}
+
+/* Pulse animation for live indicator */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.pulse { animation: pulse 2s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ─── HEADER ─── -->
+  <header class="header">
+    <div class="header-brand">
+      <div class="header-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      </div>
+      <div>
+        <div class="header-title">Feldstation</div>
+        <div class="header-subtitle">Wildlife Channel Monitor</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <span class="header-timestamp" id="lastRefresh">No data yet</span>
+      <button class="btn btn-primary" id="btnRefresh" onclick="handleRefresh()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Refresh
+      </button>
+      <button class="btn btn-icon" onclick="openSettings()" title="Settings">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ─── KPI CARDS ─── -->
+  <div class="kpi-grid" id="kpiGrid">
+    <div class="kpi-card">
+      <div class="kpi-label">Channels Monitored</div>
+      <div class="kpi-value num" id="kpiChannels">--</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Viral Videos Found</div>
+      <div class="kpi-value num discovery" id="kpiViral">--</div>
+      <div class="kpi-sub" id="kpiViralSub">above threshold</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Avg. Viral Views</div>
+      <div class="kpi-value num signal" id="kpiAvgViews">--</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Top Channel</div>
+      <div class="kpi-value" id="kpiTopChannel" style="font-size:1.1rem;font-family:var(--font-sans);">--</div>
+      <div class="kpi-sub" id="kpiTopChannelSub"></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Upload Frequency</div>
+      <div class="kpi-value num growth" id="kpiFrequency">--</div>
+      <div class="kpi-sub">videos / 30 days total</div>
+    </div>
+  </div>
+
+  <!-- ─── TABS ─── -->
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="channels">
+      Channels<span class="tab-badge" id="tabChannelCount">54</span>
+    </button>
+    <button class="tab" data-tab="viral">
+      Viral Feed<span class="tab-badge" id="tabViralCount">0</span>
+    </button>
+    <button class="tab" data-tab="ideen">
+      Ideen<span class="tab-badge" id="tabIdeenCount">0</span>
+    </button>
+  </div>
+
+  <!-- ─── CHANNELS PANEL ─── -->
+  <div class="panel active" id="panelChannels">
+    <div class="table-wrap">
+      <table class="channel-table" id="channelTable">
+        <thead>
+          <tr>
+            <th data-sort="name">Channel <span class="sort-arrow"></span></th>
+            <th data-sort="subscribers">Subscribers <span class="sort-arrow"></span></th>
+            <th data-sort="videoCount">Videos (30d) <span class="sort-arrow"></span></th>
+            <th data-sort="avgViews">Avg Views <span class="sort-arrow"></span></th>
+            <th data-sort="bestViews">Best Video <span class="sort-arrow"></span></th>
+            <th data-sort="viewSubRatio">View/Sub % <span class="sort-arrow"></span></th>
+            <th data-sort="trend">Trend <span class="sort-arrow"></span></th>
+          </tr>
+        </thead>
+        <tbody id="channelTableBody">
+        </tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="channelsEmpty">
+      <div class="empty-state-icon">&#x1F50D;</div>
+      <div class="empty-state-title">No Channel Data</div>
+      <div class="empty-state-desc">Configure your YouTube API key in settings and hit Refresh to start monitoring channels.</div>
+      <button class="btn btn-primary" onclick="openSettings()">Open Settings</button>
+    </div>
+  </div>
+
+  <!-- ─── VIRAL PANEL ─── -->
+  <div class="panel" id="panelViral">
+    <div class="viral-grid" id="viralGrid"></div>
+    <div class="empty-state" id="viralEmpty">
+      <div class="empty-state-icon">&#x1F525;</div>
+      <div class="empty-state-title">No Viral Videos Found</div>
+      <div class="empty-state-desc">Videos exceeding the view threshold will appear here once data is loaded.</div>
+    </div>
+  </div>
+
+  <!-- ─── IDEAS PANEL ─── -->
+  <div class="panel" id="panelIdeen">
+    <div class="idea-grid" id="ideaGrid"></div>
+    <div class="empty-state" id="ideenEmpty">
+      <div class="empty-state-icon">&#x1F4A1;</div>
+      <div class="empty-state-title">Keine Ideen verfügbar</div>
+      <div class="empty-state-desc">Lade zuerst Viral-Daten über den Refresh-Button, um Video-Ideen basierend auf Trends zu generieren.</div>
+    </div>
+  </div>
+
+  <!-- ─── FOOTER ─── -->
+  <footer class="footer">
+    <div class="footer-left">
+      <div class="quota-indicator">
+        <span class="quota-dot" id="quotaDot"></span>
+        <span id="quotaLabel">Quota: --</span>
+      </div>
+      <span id="cacheStatus">Cache: empty</span>
+    </div>
+    <div>
+      <button class="btn" onclick="clearCache()" style="font-size:0.7rem;padding:4px 10px;">Clear Cache</button>
+    </div>
+  </footer>
+</div>
+
+<!-- ─── PROGRESS OVERLAY ─── -->
+<div class="progress-overlay" id="progressOverlay">
+  <div class="progress-box">
+    <div class="progress-title" id="progressTitle">Loading channels...</div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">0 / 54</div>
+    <div class="progress-cancel">
+      <button class="btn" onclick="cancelFetch()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SETTINGS MODAL ─── -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Settings</div>
+      <button class="modal-close" onclick="closeSettings()">&times;</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="apiKeyInput">YouTube API Key</label>
+      <input class="form-input" id="apiKeyInput" type="password" placeholder="AIza...">
+      <div class="form-hint">Stored locally in your browser. Never sent anywhere except YouTube API.</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="anthropicKeyInput">Anthropic API Key</label>
+      <input class="form-input" id="anthropicKeyInput" type="password" placeholder="sk-ant-...">
+      <div class="form-hint">Für Skript-Generierung. Wird direkt vom Browser genutzt. Setze Spending Limits im Anthropic Dashboard.</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="styleInput">Skript-Stil</label>
+      <textarea class="form-input" id="styleInput" rows="3" style="resize:vertical;font-family:var(--font-sans);" placeholder="Beschreibe deinen Stil..."></textarea>
+      <div class="form-hint">Beschreibung des gewünschten Stils für generierte Skripte.</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="elevenlabsKeyInput">ElevenLabs API Key</label>
+      <input class="form-input" id="elevenlabsKeyInput" type="password" placeholder="sk_... oder xi-...">
+      <div class="form-hint">Für Text-to-Speech Vertonung. Zu finden unter elevenlabs.io/app/settings/api-keys.</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="elevenlabsVoiceSelect">ElevenLabs Stimme</label>
+      <div style="display:flex;gap:var(--unit);">
+        <select class="form-input" id="elevenlabsVoiceSelect" style="flex:1;">
+          <option value="">Stimmen laden...</option>
+        </select>
+        <button class="btn" onclick="loadElevenLabsVoices()" style="white-space:nowrap;">Laden</button>
+      </div>
+      <div class="form-hint">Klicke "Laden" nachdem du den API Key eingetragen hast.</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">View Threshold</label>
+      <div class="form-range-wrap">
+        <input class="form-range" id="thresholdRange" type="range" min="10000" max="500000" step="5000" value="50000">
+        <span class="form-range-value num" id="thresholdValue">50K</span>
+      </div>
+      <div class="form-hint">Minimum views for a video to appear in the Viral Feed.</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Lookback Period (Days)</label>
+      <div class="form-range-wrap">
+        <input class="form-range" id="lookbackRange" type="range" min="7" max="90" step="1" value="30">
+        <span class="form-range-value num" id="lookbackValue">30</span>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeSettings()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSettings()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SCRIPT GENERATION MODAL ─── -->
+<div class="script-overlay" id="scriptOverlay">
+  <div class="script-modal">
+    <div class="script-header">
+      <div>
+        <div class="script-topic" id="scriptTopic"></div>
+        <div class="script-topic-sub" id="scriptTopicSub"></div>
+      </div>
+      <button class="modal-close" onclick="closeScriptModal()">&times;</button>
+    </div>
+    <div id="scriptBody">
+      <div class="script-loading" id="scriptLoading">
+        <div class="script-loading-spinner"></div>
+        <div class="script-loading-text">Skript wird generiert...</div>
+      </div>
+      <div id="scriptResult" style="display:none;">
+        <div class="script-section">
+          <div class="script-section-header">
+            <span class="script-section-label">Titel-Vorschläge</span>
+            <button class="script-copy-btn" onclick="copySection('scriptTitles')">Kopieren</button>
+          </div>
+          <div class="script-content" id="scriptTitles"></div>
+        </div>
+        <div class="script-section">
+          <div class="script-section-header">
+            <span class="script-section-label">Skript</span>
+            <div style="display:flex;align-items:center;gap:calc(var(--unit) * 2);">
+              <span class="script-word-count" id="scriptWordCount" style="font-family:var(--font-mono);font-size:0.7rem;color:var(--fossil);"></span>
+              <button class="script-copy-btn" onclick="copySection('scriptText')">Kopieren</button>
+            </div>
+          </div>
+          <div class="script-content" id="scriptText"></div>
+        </div>
+      </div>
+      <div class="script-error" id="scriptError" style="display:none;"></div>
+      <!-- Audio Section -->
+      <div class="audio-section" id="audioSection" style="display:none;">
+        <div class="audio-section-header">
+          <span class="audio-section-label">Vertonung</span>
+        </div>
+        <div id="audioProgress" style="display:none;">
+          <div class="audio-progress">
+            <div class="audio-progress-bar">
+              <div class="audio-progress-fill" id="audioProgressFill" style="width:0%"></div>
+            </div>
+            <span class="audio-progress-label" id="audioProgressLabel">Wird generiert...</span>
+          </div>
+        </div>
+        <div id="audioPlayerWrap" style="display:none;">
+          <audio class="audio-player" id="audioPlayer" controls></audio>
+          <div style="margin-top:calc(var(--unit) * 1.5);display:flex;gap:var(--unit);">
+            <a class="audio-download-link" id="audioDownload" download="voiceover.mp3">MP3 herunterladen</a>
+          </div>
+        </div>
+        <div id="audioError" style="display:none;color:var(--decline);font-size:0.82rem;"></div>
+      </div>
+    </div>
+    <div class="script-actions">
+      <button class="btn" onclick="closeScriptModal()">Schließen</button>
+      <button class="btn btn-tts" id="btnTTS" onclick="generateTTS()" style="display:none;">Vertonen</button>
+      <button class="btn btn-idea" id="btnRegenerate" onclick="regenerateScript()">Neu generieren</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TOAST CONTAINER ─── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   CONSTANTS & CONFIG
+   ═══════════════════════════════════════════════════════════════ */
+const STORAGE_KEYS = Object.freeze({
+  API_KEY: 'feldstation_api_key',
+  THRESHOLD: 'feldstation_threshold',
+  LOOKBACK: 'feldstation_lookback',
+  CHANNEL_DATA: 'feldstation_channel_data',
+  VIDEO_DATA: 'feldstation_video_data',
+  CACHE_TIMESTAMP: 'feldstation_cache_ts',
+  QUOTA_USED: 'feldstation_quota_used',
+  ANTHROPIC_KEY: 'feldstation_anthropic_key',
+  STYLE_PROMPT: 'feldstation_style_prompt',
+  SCRIPT_CACHE: 'feldstation_script_cache',
+  ELEVENLABS_KEY: 'feldstation_elevenlabs_key',
+  ELEVENLABS_VOICE: 'feldstation_elevenlabs_voice',
+});
+
+const CACHE_TTL_MS = 4 * 60 * 60 * 1000; // 4 hours
+const DAILY_QUOTA = 10000;
+const YT_API_BASE = 'https://www.googleapis.com/youtube/v3';
+const MAX_VIDEOS_PER_REQUEST = 50;
+
+const CHANNELS = Object.freeze([
+  { name: "LEGENDARE TIERE", handle: "@LEGENDÄRETIERELEGENDÄRETIERE" },
+  { name: "giblixy", handle: "@giblixy" },
+  { name: "Wild Horizons", handle: "@WildHorizons6688" },
+  { name: "Wild Waters", handle: "@WildWatersDocs" },
+  { name: "The Mythical Mug Tavern", handle: "@TheMythicalMugTavern" },
+  { name: "Bright Side Wild Nature", handle: "@BrightSideWildNature" },
+  { name: "Bright Side Deep Sea", handle: "@BrightSideDeepSea" },
+  { name: "Spinosnack", handle: "@Spinosnack" },
+  { name: "AnimalsFact", handle: "@PancakeAnimalfact" },
+  { name: "The Ultimate Discovery", handle: "@ultimatediscovery" },
+  { name: "DIE WEISE EULE", handle: "@DieWeiseEule" },
+  { name: "Animalogic", handle: "@animalogic" },
+  { name: "Eclesso", handle: "@Eclesso" },
+  { name: "Criaturas Extranas", handle: "@CriaturasExtrañas_YT" },
+  { name: "Earth Stories Deutschland", handle: "@EarthStoriesDE" },
+  { name: "Land of Giants", handle: "@LandofGiants0" },
+  { name: "WildCiencias", handle: "@WildCiencias" },
+  { name: "Forrest Galante", handle: "@ForrestGalante" },
+  { name: "Erlebnis Erde", handle: "@ErlebnisErde" },
+  { name: "ExtinctDoc", handle: "@ExtinctDoc" },
+  { name: "Erdarchiv", handle: "@Erdarchiv" },
+  { name: "The Curious Kid", handle: "@TheCuriousKidyt" },
+  { name: "AG-Rescue Nexus", handle: "@RescueNexus" },
+  { name: "Destiny", handle: "@DestinySpace" },
+  { name: "Wildlife Rankings", handle: "@WildLifeRankings25" },
+  { name: "MyWildBackyard", handle: "@MyWildBackyard" },
+  { name: "Astrum Earth", handle: "@AstrumEarth" },
+  { name: "Auralis", handle: "@AuralisDocs" },
+  { name: "Nature Empire Deutsch", handle: "@NatureEmpireDeutsch" },
+  { name: "DeepseaOddities", handle: "@DeepseaOddities" },
+  { name: "Natural World Facts", handle: "@NaturalWorldFacts" },
+  { name: "Mr. Science", handle: "@mr.scienceYT" },
+  { name: "Ben G Thomas", handle: "@BenGThomas" },
+  { name: "AusgestorbenerZoo", handle: "@AusgestorbenerZoo" },
+  { name: "PBS Eons", handle: "@eons" },
+  { name: "Mavora", handle: "@Mavora-917" },
+  { name: "Instinto Feroz", handle: "@InstintoFeroz" },
+  { name: "Myth Monsters", handle: "@MythMonstersalive" },
+  { name: "Jay Hona", handle: "@Jay_Hona" },
+  { name: "BeyondTheBlue", handle: "@OfficialBeyondTheBlue" },
+  { name: "JurassicWelt", handle: "@f3rlas" },
+  { name: "MythenWelt", handle: "@MythenWelt" },
+  { name: "Buried Earth", handle: "@BuriedEarth" },
+  { name: "MuzStudio", handle: "@MuzStudio" },
+  { name: "Animal Insider", handle: "@animalinsider101" },
+  { name: "All.About.Nature", handle: "@all.about.nature2525" },
+  { name: "Milex", handle: "@MilexAnimals" },
+  { name: "ExtinctZoo", handle: "@ExtinctZoo" },
+  { name: "Claws", handle: "@clawsyoutube" },
+  { name: "KIOK", handle: "@KIOKyt" },
+  { name: "VerruckterZoo", handle: "@VerrückterZoo" },
+  { name: "Jurassic Stories", handle: "@JurassicStoriesDE" },
+  { name: "LivingZoo", handle: "@LivingZoo" },
+  { name: "Wild Relics Tv", handle: "@WildRelicsTv" },
+]);
+
+/* ═══════════════════════════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════════════════════════ */
+let appState = Object.freeze({
+  channels: [],
+  videos: [],
+  ideas: [],
+  currentIdea: null,
+  sortColumn: 'avgViews',
+  sortDirection: 'desc',
+  activeTab: 'channels',
+  isFetching: false,
+  fetchCancelled: false,
+  quotaUsed: parseInt(localStorage.getItem(STORAGE_KEYS.QUOTA_USED) || '0', 10),
+});
+
+function updateState(patch) {
+  appState = Object.freeze({ ...appState, ...patch });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY: NUMBER FORMATTING
+   ═══════════════════════════════════════════════════════════════ */
+function formatCompact(n) {
+  if (n == null || isNaN(n)) return '--';
+  const num = Number(n);
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(2).replace('.', ',') + 'M';
+  }
+  if (num >= 1000) {
+    return (num / 1000).toFixed(num >= 10000 ? 0 : 1).replace('.', ',') + 'K';
+  }
+  return num.toLocaleString('de-DE');
+}
+
+function formatGerman(n) {
+  if (n == null || isNaN(n)) return '--';
+  return Number(n).toLocaleString('de-DE');
+}
+
+function formatPercent(n) {
+  if (n == null || isNaN(n)) return '--';
+  return Number(n).toFixed(1).replace('.', ',') + '%';
+}
+
+function formatDate(isoStr) {
+  if (!isoStr) return '--';
+  const d = new Date(isoStr);
+  return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+function formatTimestamp(ts) {
+  if (!ts) return 'No data yet';
+  const d = new Date(ts);
+  return d.toLocaleString('de-DE', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
+}
+
+function getInitials(name) {
+  return name.split(/[\s.]+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY: TOAST NOTIFICATIONS
+   ═══════════════════════════════════════════════════════════════ */
+function showToast(message, type = 'error') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    if (toast.parentNode) toast.parentNode.removeChild(toast);
+  }, 5000);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY: LOCAL STORAGE HELPERS
+   ═══════════════════════════════════════════════════════════════ */
+function getApiKey() {
+  return localStorage.getItem(STORAGE_KEYS.API_KEY) || '';
+}
+
+function getThreshold() {
+  return parseInt(localStorage.getItem(STORAGE_KEYS.THRESHOLD) || '50000', 10);
+}
+
+function getLookback() {
+  return parseInt(localStorage.getItem(STORAGE_KEYS.LOOKBACK) || '30', 10);
+}
+
+function getAnthropicKey() {
+  return localStorage.getItem(STORAGE_KEYS.ANTHROPIC_KEY) || '';
+}
+
+function getStylePrompt() {
+  return localStorage.getItem(STORAGE_KEYS.STYLE_PROMPT) ||
+    'Deutscher Wildlife-Dokumentar-Erzähler. Informativ, dramatisch, zugänglich. Ähnlich wie Terra X oder BBC Earth. Spreche das Publikum direkt an, nutze bildhafte Sprache und baue Spannung auf. Das Skript wird in ElevenLabs vertont — schreibe so, wie ein professioneller Sprecher es lesen würde.';
+}
+
+function getElevenLabsKey() {
+  return localStorage.getItem(STORAGE_KEYS.ELEVENLABS_KEY) || '';
+}
+
+function getElevenLabsVoice() {
+  return localStorage.getItem(STORAGE_KEYS.ELEVENLABS_VOICE) || '';
+}
+
+function getCacheTimestamp() {
+  return parseInt(localStorage.getItem(STORAGE_KEYS.CACHE_TIMESTAMP) || '0', 10);
+}
+
+function isCacheValid() {
+  const ts = getCacheTimestamp();
+  return ts > 0 && (Date.now() - ts) < CACHE_TTL_MS;
+}
+
+function trackQuota(cost) {
+  const newUsed = appState.quotaUsed + cost;
+  updateState({ quotaUsed: newUsed });
+  localStorage.setItem(STORAGE_KEYS.QUOTA_USED, String(newUsed));
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   YOUTUBE API LAYER
+   ═══════════════════════════════════════════════════════════════ */
+async function ytFetch(endpoint, params) {
+  const apiKey = getApiKey();
+  if (!apiKey) throw new Error('No API key configured');
+
+  const url = new URL(`${YT_API_BASE}/${endpoint}`);
+  const allParams = { ...params, key: apiKey };
+  Object.entries(allParams).forEach(([k, v]) => url.searchParams.set(k, v));
+
+  const res = await fetch(url.toString());
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    const errMsg = body?.error?.message || `HTTP ${res.status}`;
+    if (res.status === 403) throw new Error(`Quota exceeded or API key invalid: ${errMsg}`);
+    if (res.status === 400) throw new Error(`Bad request: ${errMsg}`);
+    throw new Error(`YouTube API error: ${errMsg}`);
+  }
+
+  return res.json();
+}
+
+async function resolveChannelByHandle(handle) {
+  const cleanHandle = handle.startsWith('@') ? handle.substring(1) : handle;
+  const data = await ytFetch('channels', {
+    part: 'snippet,statistics',
+    forHandle: cleanHandle,
+  });
+  trackQuota(1);
+  if (!data.items || data.items.length === 0) return null;
+  return data.items[0];
+}
+
+async function fetchRecentVideos(channelId, publishedAfter) {
+  const data = await ytFetch('search', {
+    part: 'id',
+    channelId: channelId,
+    order: 'date',
+    publishedAfter: publishedAfter,
+    type: 'video',
+    maxResults: '50',
+  });
+  trackQuota(100);
+  if (!data.items) return [];
+  return data.items.map(item => item.id.videoId).filter(Boolean);
+}
+
+async function fetchVideoStatsBatch(videoIds) {
+  if (videoIds.length === 0) return [];
+  const data = await ytFetch('videos', {
+    part: 'snippet,statistics,contentDetails',
+    id: videoIds.join(','),
+  });
+  trackQuota(1);
+  return data.items || [];
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANTHROPIC API LAYER
+   ═══════════════════════════════════════════════════════════════ */
+async function claudeGenerate(systemPrompt, userPrompt) {
+  const apiKey = getAnthropicKey();
+  if (!apiKey) throw new Error('Kein Anthropic API Key konfiguriert. Bitte in den Einstellungen hinterlegen.');
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 16000,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }],
+    }),
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    const errMsg = body?.error?.message || `HTTP ${res.status}`;
+    if (res.status === 401) throw new Error('Ungültiger Anthropic API Key.');
+    if (res.status === 429) throw new Error('Rate Limit erreicht. Bitte kurz warten.');
+    throw new Error(`Anthropic API Fehler: ${errMsg}`);
+  }
+
+  const data = await res.json();
+  const textBlock = (data.content || []).find(b => b.type === 'text');
+  if (!textBlock) throw new Error('Keine Antwort von Claude erhalten.');
+  return textBlock.text;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCRIPT GENERATION
+   ═══════════════════════════════════════════════════════════════ */
+async function generateScript(idea) {
+  const style = getStylePrompt();
+
+  const systemPrompt = `Du bist ein erfahrener Skript-Autor für Wildlife-Dokumentationen auf YouTube.
+Dein Stil: ${style}
+
+LÄNGE: Ziel sind 2.000 Wörter reiner Sprechtext (ca. 12-15 Minuten).
+
+FORMAT:
+- NUR Sprechtext. KEINE Regieanweisungen, KEINE eckigen Klammern wie [flüsternd], [ernst]. KEINE Anmerkungen.
+- KEINE <break> Tags oder SSML-Tags.
+- Schreibe natürlich, wie ein Sprecher es vorlesen würde.
+
+STRUKTUR mit Überschriften in eckigen Klammern (werden vor Vertonung entfernt):
+
+[HOOK] — Packender Einstieg, 3-4 Sätze.
+[INTRO] — Thema vorstellen, Kontext, 5-6 Sätze.
+[KAPITEL 1: Titel] — Erster Hauptteil, 3 Absätze mit Fakten und Beispielen.
+[KAPITEL 2: Titel] — Zweiter Hauptteil, 3 Absätze, neuer Aspekt.
+[KAPITEL 3: Titel] — Dritter Hauptteil, 3 Absätze, Wendepunkt oder Überraschung.
+[FAZIT] — Zusammenfassung, Ausblick, Call-to-Action, 4-5 Sätze.`;
+
+  const sourceInfo = idea.sourceVideos
+    .slice(0, 5)
+    .map(v => `- "${v.title}" (${formatCompact(v.views)} Views)`)
+    .join('\n');
+
+  const userPrompt = `Schreibe ein Video-Skript (ca. 2.000 Wörter, 12-15 Minuten) zum Thema: "${idea.topic}"
+
+Trending Videos als Inspiration:
+${sourceInfo}
+
+Blickwinkel: ${idea.suggestedAngle}
+
+NUR Sprechtext, keine Anmerkungen, keine SSML-Tags. Wird direkt in ElevenLabs vertont.`;
+
+  const response = await claudeGenerate(systemPrompt, userPrompt);
+  return parseScriptResponse(response, idea.topic);
+}
+
+function parseScriptResponse(text, topic) {
+  const titleMatch = text.match(/## TITEL\s*\n([\s\S]*?)(?=## SKRIPT|$)/i);
+  const scriptMatch = text.match(/## SKRIPT\s*\n([\s\S]*?)$/i);
+
+  const titles = (titleMatch ? titleMatch[1] : '').trim();
+  let script = (scriptMatch ? scriptMatch[1] : '').trim();
+
+  if (!titles && !script) {
+    script = text.trim();
+  }
+
+  // Count only spoken words (strip tags, headings, annotations)
+  const spokenText = script
+    .replace(/<[^>]+>/g, '')
+    .replace(/\[(?:HOOK|INTRO|KAPITEL \d+[^\]]*|FAZIT|OUTRO|ABSCHNITT \d+[^\]]*)\]/gi, '')
+    .replace(/\[[^\]]*\]/g, '')
+    .replace(/^#{1,3}\s+.*/gm, '')
+    .replace(/\*+/g, '');
+  const wordCount = spokenText.split(/\s+/).filter(w => w.length > 0).length;
+
+  return Object.freeze({
+    topic,
+    titles,
+    script,
+    wordCount,
+    generatedAt: Date.now(),
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCRIPT CACHE
+   ═══════════════════════════════════════════════════════════════ */
+function getScriptCacheKey(topic) {
+  return topic.toLowerCase().replace(/[^a-zäöüß0-9]+/g, '-').slice(0, 80);
+}
+
+function getCachedScript(topic) {
+  try {
+    const cache = JSON.parse(localStorage.getItem(STORAGE_KEYS.SCRIPT_CACHE) || '{}');
+    const key = getScriptCacheKey(topic);
+    return cache[key] || null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function cacheScript(topic, scriptRecord) {
+  try {
+    const cache = JSON.parse(localStorage.getItem(STORAGE_KEYS.SCRIPT_CACHE) || '{}');
+    const key = getScriptCacheKey(topic);
+    const updated = { ...cache, [key]: scriptRecord };
+
+    const entries = Object.entries(updated);
+    if (entries.length > 20) {
+      entries.sort((a, b) => (a[1].generatedAt || 0) - (b[1].generatedAt || 0));
+      const trimmed = Object.fromEntries(entries.slice(entries.length - 20));
+      localStorage.setItem(STORAGE_KEYS.SCRIPT_CACHE, JSON.stringify(trimmed));
+    } else {
+      localStorage.setItem(STORAGE_KEYS.SCRIPT_CACHE, JSON.stringify(updated));
+    }
+  } catch (_) {
+    // localStorage quota exceeded — silently skip caching
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ELEVENLABS API LAYER
+   ═══════════════════════════════════════════════════════════════ */
+async function elevenLabsFetch(endpoint, options = {}) {
+  const apiKey = getElevenLabsKey();
+  if (!apiKey) throw new Error('Kein ElevenLabs API Key konfiguriert. Bitte in den Einstellungen hinterlegen.');
+
+  const url = `https://api.elevenlabs.io/v1${endpoint}`;
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      'xi-api-key': apiKey,
+      ...(options.headers || {}),
+    },
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    const errMsg = body?.detail?.message || body?.detail || `HTTP ${res.status}`;
+    if (res.status === 401) throw new Error('Ungültiger ElevenLabs API Key.');
+    if (res.status === 429) throw new Error('ElevenLabs Rate Limit erreicht. Bitte kurz warten.');
+    throw new Error(`ElevenLabs Fehler: ${errMsg}`);
+  }
+
+  return res;
+}
+
+async function loadElevenLabsVoices() {
+  const select = document.getElementById('elevenlabsVoiceSelect');
+  const keyInput = document.getElementById('elevenlabsKeyInput');
+  const tempKey = keyInput ? keyInput.value.trim() : '';
+
+  if (!tempKey && !getElevenLabsKey()) {
+    showToast('Bitte zuerst ElevenLabs API Key eingeben', 'warn');
+    return;
+  }
+
+  // Temporarily store key so the fetch can use it
+  if (tempKey) {
+    localStorage.setItem(STORAGE_KEYS.ELEVENLABS_KEY, tempKey);
+  }
+
+  select.innerHTML = '<option value="">Laden...</option>';
+
+  try {
+    const res = await elevenLabsFetch('/voices');
+    const data = await res.json();
+    const voices = data.voices || [];
+
+    const savedVoice = getElevenLabsVoice();
+    const options = voices
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(v => {
+        const label = `${v.name} (${v.labels?.accent || v.labels?.gender || 'custom'})`;
+        const selected = v.voice_id === savedVoice ? ' selected' : '';
+        return `<option value="${v.voice_id}"${selected}>${escapeHtml(label)}</option>`;
+      })
+      .join('');
+
+    select.innerHTML = `<option value="">Stimme wählen...</option>${options}`;
+    showToast(`${voices.length} Stimmen geladen`, 'success');
+  } catch (err) {
+    select.innerHTML = '<option value="">Fehler beim Laden</option>';
+    showToast(err.message, 'error');
+  }
+}
+
+function prepareScriptForTTS(rawScript) {
+  let text = rawScript;
+
+  // Remove chapter headings — not spoken
+  text = text.replace(/\[(?:HOOK|INTRO|KAPITEL \d+[^\]]*|FAZIT|OUTRO|ABSCHNITT \d+[^\]]*)\]\s*/gi, '\n');
+
+  // Remove any remaining square bracket annotations
+  text = text.replace(/\[[^\]]*\]\s*/g, '');
+
+  // Remove any SSML/break tags that slipped through
+  text = text.replace(/<break[^>]*\/?>/g, '');
+  text = text.replace(/<[^>]+>/g, '');
+
+  // Remove markdown formatting
+  text = text.replace(/\*\*([^*]+)\*\*/g, '$1');
+  text = text.replace(/\*([^*]+)\*/g, '$1');
+  text = text.replace(/^#{1,3}\s+/gm, '');
+
+  // Clean up excessive whitespace
+  text = text.replace(/\n{3,}/g, '\n\n');
+  text = text.replace(/  +/g, ' ');
+
+  return text.trim();
+}
+
+async function generateTTS() {
+  const voiceId = getElevenLabsVoice();
+  if (!voiceId) {
+    showToast('Bitte zuerst eine Stimme in den Einstellungen wählen', 'warn');
+    return;
+  }
+
+  const scriptEl = document.getElementById('scriptText');
+  if (!scriptEl || !scriptEl.textContent.trim()) {
+    showToast('Kein Skript vorhanden', 'warn');
+    return;
+  }
+
+  const rawScript = scriptEl.textContent;
+  const ttsText = prepareScriptForTTS(rawScript);
+
+  // Show audio section with progress
+  const audioSection = document.getElementById('audioSection');
+  const audioProgress = document.getElementById('audioProgress');
+  const audioPlayerWrap = document.getElementById('audioPlayerWrap');
+  const audioError = document.getElementById('audioError');
+  const progressFill = document.getElementById('audioProgressFill');
+  const progressLabel = document.getElementById('audioProgressLabel');
+
+  audioSection.style.display = 'block';
+  audioProgress.style.display = 'block';
+  audioPlayerWrap.style.display = 'none';
+  audioError.style.display = 'none';
+  progressFill.style.width = '0%';
+  progressLabel.textContent = 'Verbinde mit ElevenLabs...';
+
+  // ElevenLabs has a 5000 char limit per request — split if needed
+  const chunks = splitTextForTTS(ttsText, 4800);
+  const audioBlobs = [];
+
+  try {
+    for (let i = 0; i < chunks.length; i++) {
+      const pct = Math.round(((i) / chunks.length) * 90);
+      progressFill.style.width = `${pct}%`;
+      progressLabel.textContent = chunks.length > 1
+        ? `Teil ${i + 1} von ${chunks.length} wird vertont...`
+        : 'Wird vertont...';
+
+      const res = await elevenLabsFetch(`/text-to-speech/${voiceId}`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          text: chunks[i],
+          model_id: 'eleven_multilingual_v2',
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.75,
+            style: 0.4,
+            use_speaker_boost: true,
+          },
+        }),
+      });
+
+      const blob = await res.blob();
+      audioBlobs.push(blob);
+    }
+
+    progressFill.style.width = '95%';
+    progressLabel.textContent = 'Audio wird zusammengesetzt...';
+
+    // Combine all audio blobs
+    const finalBlob = new Blob(audioBlobs, { type: 'audio/mpeg' });
+    const audioUrl = URL.createObjectURL(finalBlob);
+
+    // Set up player
+    const player = document.getElementById('audioPlayer');
+    player.src = audioUrl;
+
+    const downloadLink = document.getElementById('audioDownload');
+    const topic = appState.currentIdea ? appState.currentIdea.topic : 'voiceover';
+    const filename = `${topic.toLowerCase().replace(/[^a-zäöüß0-9]+/g, '-')}.mp3`;
+    downloadLink.href = audioUrl;
+    downloadLink.download = filename;
+
+    progressFill.style.width = '100%';
+    progressLabel.textContent = 'Fertig!';
+
+    setTimeout(() => {
+      audioProgress.style.display = 'none';
+      audioPlayerWrap.style.display = 'block';
+    }, 500);
+
+    showToast('Voiceover generiert!', 'success');
+  } catch (err) {
+    audioProgress.style.display = 'none';
+    audioError.style.display = 'block';
+    audioError.textContent = err.message;
+    showToast(err.message, 'error');
+  }
+}
+
+function splitTextForTTS(text, maxLen) {
+  if (text.length <= maxLen) return [text];
+
+  const chunks = [];
+  let remaining = text;
+
+  while (remaining.length > 0) {
+    if (remaining.length <= maxLen) {
+      chunks.push(remaining);
+      break;
+    }
+
+    // Find a good split point — prefer paragraph break, then sentence end, then break tag
+    let splitAt = -1;
+
+    // Try paragraph break
+    const paraIdx = remaining.lastIndexOf('\n\n', maxLen);
+    if (paraIdx > maxLen * 0.3) {
+      splitAt = paraIdx + 2;
+    }
+
+    // Try sentence end
+    if (splitAt === -1) {
+      const sentenceEnd = remaining.substring(0, maxLen).search(/[.!?]\s+(?=[A-ZÄÖÜ\[])/g);
+      if (sentenceEnd > maxLen * 0.3) {
+        // Find the last sentence end before maxLen
+        let lastEnd = -1;
+        const sub = remaining.substring(0, maxLen);
+        const regex = /[.!?]\s/g;
+        let match;
+        while ((match = regex.exec(sub)) !== null) {
+          lastEnd = match.index + match[0].length;
+        }
+        if (lastEnd > maxLen * 0.3) {
+          splitAt = lastEnd;
+        }
+      }
+    }
+
+    // Try break tag
+    if (splitAt === -1) {
+      const breakIdx = remaining.lastIndexOf('<break', maxLen);
+      if (breakIdx > maxLen * 0.3) {
+        const endTag = remaining.indexOf('/>', breakIdx);
+        splitAt = endTag > -1 ? endTag + 2 : breakIdx;
+      }
+    }
+
+    // Fallback: hard split at maxLen
+    if (splitAt === -1 || splitAt <= 0) {
+      splitAt = maxLen;
+    }
+
+    chunks.push(remaining.substring(0, splitAt).trim());
+    remaining = remaining.substring(splitAt).trim();
+  }
+
+  return chunks;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOPIC ANALYSIS ENGINE
+   ═══════════════════════════════════════════════════════════════ */
+const STOPWORDS = new Set([
+  // German
+  'der','die','das','ein','eine','einer','eines','den','dem','des',
+  'und','oder','aber','doch','nicht','kein','keine','keiner',
+  'ist','sind','war','waren','wird','werden','hat','haben','kann',
+  'von','mit','für','auf','an','in','zu','aus','bei','nach','über',
+  'unter','vor','zwischen','durch','um','bis','seit','gegen',
+  'ich','du','er','sie','es','wir','ihr','mich','dich','sich',
+  'was','wie','wer','wo','wann','warum','welche','welcher','welches',
+  'auch','nur','noch','schon','sehr','mehr','als','wenn','dass','ob',
+  'diese','dieser','dieses','jede','jeder','alle','viele','einige',
+  // English
+  'the','a','an','is','are','was','were','be','been','being',
+  'have','has','had','do','does','did','will','would','could','should',
+  'may','might','shall','can','need','must','ought',
+  'i','you','he','she','it','we','they','me','him','her','us','them',
+  'my','your','his','its','our','their','mine','yours','ours','theirs',
+  'this','that','these','those','which','who','whom','what','where','when',
+  'why','how','all','each','every','both','few','more','most','other',
+  'some','such','no','not','only','same','so','than','too','very',
+  'of','to','in','for','on','with','at','by','from','up','about',
+  'into','over','after','and','but','or','if','while','because','as',
+  'until','during','before','between','through','above','below',
+  'top','most','new','vs','part',
+]);
+
+function normalizeText(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^\wäöüß\s-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function extractKeywords(title) {
+  const normalized = normalizeText(title);
+  const tokens = normalized.split(/\s+/).filter(t => t.length > 2 && !STOPWORDS.has(t));
+  return tokens;
+}
+
+function extractBigrams(tokens) {
+  const bigrams = [];
+  for (let i = 0; i < tokens.length - 1; i++) {
+    bigrams.push(`${tokens[i]} ${tokens[i + 1]}`);
+  }
+  return bigrams;
+}
+
+function analyzeTopics(videos) {
+  if (videos.length === 0) return [];
+
+  const keywordIndex = {};
+  const bigramIndex = {};
+
+  videos.forEach(video => {
+    const keywords = extractKeywords(video.title);
+    const bigrams = extractBigrams(keywords);
+    const uniqueKeywords = [...new Set(keywords)];
+    const uniqueBigrams = [...new Set(bigrams)];
+
+    uniqueKeywords.forEach(kw => {
+      if (!keywordIndex[kw]) keywordIndex[kw] = [];
+      keywordIndex[kw].push(video);
+    });
+
+    uniqueBigrams.forEach(bg => {
+      if (!bigramIndex[bg]) bigramIndex[bg] = [];
+      bigramIndex[bg].push(video);
+    });
+  });
+
+  const clusters = [];
+
+  // Bigram clusters (higher quality)
+  Object.entries(bigramIndex)
+    .filter(([_, vids]) => vids.length >= 2)
+    .forEach(([bigram, vids]) => {
+      const totalViews = vids.reduce((sum, v) => sum + v.views, 0);
+      const avgRecency = vids.reduce((sum, v) => sum + new Date(v.publishedAt).getTime(), 0) / vids.length;
+      clusters.push({
+        topic: bigram,
+        keywords: bigram.split(' '),
+        sourceVideos: vids,
+        totalViews,
+        videoCount: vids.length,
+        recencyScore: avgRecency,
+        score: (vids.length * 3) + (totalViews / 100000) + (avgRecency / (Date.now() * 0.1)),
+        isBigram: true,
+      });
+    });
+
+  // Single keyword clusters (only if not already covered by bigrams)
+  const coveredByBigrams = new Set();
+  clusters.forEach(c => c.keywords.forEach(k => coveredByBigrams.add(k)));
+
+  Object.entries(keywordIndex)
+    .filter(([kw, vids]) => vids.length >= 3 && !coveredByBigrams.has(kw))
+    .forEach(([keyword, vids]) => {
+      const totalViews = vids.reduce((sum, v) => sum + v.views, 0);
+      const avgRecency = vids.reduce((sum, v) => sum + new Date(v.publishedAt).getTime(), 0) / vids.length;
+      clusters.push({
+        topic: keyword,
+        keywords: [keyword],
+        sourceVideos: vids,
+        totalViews,
+        videoCount: vids.length,
+        recencyScore: avgRecency,
+        score: (vids.length * 2) + (totalViews / 100000) + (avgRecency / (Date.now() * 0.1)),
+        isBigram: false,
+      });
+    });
+
+  // Deduplicate: if two clusters share >60% source videos, keep the higher scored one
+  const deduped = [];
+  const used = new Set();
+  const sorted = [...clusters].sort((a, b) => b.score - a.score);
+
+  sorted.forEach(cluster => {
+    const videoIds = new Set(cluster.sourceVideos.map(v => v.id));
+    const isDuplicate = deduped.some(existing => {
+      const existingIds = new Set(existing.sourceVideos.map(v => v.id));
+      const overlap = [...videoIds].filter(id => existingIds.has(id)).length;
+      return overlap / Math.min(videoIds.size, existingIds.size) > 0.6;
+    });
+    if (!isDuplicate) {
+      deduped.push(cluster);
+    }
+  });
+
+  return deduped.slice(0, 15).map((c, i) => generateAngle(c, i));
+}
+
+function generateAngle(cluster, index) {
+  const topicCapitalized = cluster.topic
+    .split(' ')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+
+  const angles = [
+    `Die unerzählte Geschichte: ${topicCapitalized} aus einer völlig neuen Perspektive`,
+    `Top-Fakten über ${topicCapitalized}, die kaum jemand kennt`,
+    `${topicCapitalized}: Was die Wissenschaft gerade erst entdeckt hat`,
+    `Die gefährlichste Seite von ${topicCapitalized}`,
+    `${topicCapitalized} — Mythos vs. Realität`,
+    `Warum ${topicCapitalized} das Internet fasziniert`,
+    `${topicCapitalized}: Ein Blick hinter die Kulissen der Natur`,
+  ];
+
+  const suggestedAngle = angles[index % angles.length];
+
+  return Object.freeze({
+    topic: topicCapitalized,
+    keywords: cluster.keywords,
+    sourceVideos: cluster.sourceVideos.map(v => Object.freeze({
+      id: v.id,
+      title: v.title,
+      views: v.views,
+      channelName: v.channelName,
+    })),
+    totalViews: cluster.totalViews,
+    videoCount: cluster.videoCount,
+    score: cluster.score,
+    suggestedAngle,
+  });
+}
+
+function analyzeAndUpdateIdeas() {
+  const ideas = analyzeTopics(appState.videos);
+  updateState({ ideas });
+  renderIdeen();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CHUNK HELPER — splits array into groups of N
+   ═══════════════════════════════════════════════════════════════ */
+function chunk(arr, size) {
+  const result = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MAIN DATA FETCH ORCHESTRATOR
+   ═══════════════════════════════════════════════════════════════ */
+async function fetchAllData() {
+  if (appState.isFetching) return;
+  if (!getApiKey()) {
+    openSettings();
+    return;
+  }
+
+  updateState({ isFetching: true, fetchCancelled: false });
+  showProgress(true);
+  updateProgress(0, CHANNELS.length, 'Resolving channels...');
+
+  const lookbackDays = getLookback();
+  const publishedAfter = new Date(Date.now() - lookbackDays * 24 * 60 * 60 * 1000).toISOString();
+  const channelResults = [];
+  const allVideoIds = [];
+  const channelVideoMap = {};
+
+  try {
+    for (let i = 0; i < CHANNELS.length; i++) {
+      if (appState.fetchCancelled) {
+        showToast('Fetch cancelled', 'warn');
+        break;
+      }
+
+      const ch = CHANNELS[i];
+      updateProgress(i, CHANNELS.length, `Resolving ${ch.name}...`);
+
+      try {
+        const resolved = await resolveChannelByHandle(ch.handle);
+        if (!resolved) {
+          channelResults.push(buildChannelRecord(ch, null, []));
+          continue;
+        }
+
+        const channelId = resolved.id;
+        const videoIds = await fetchRecentVideos(channelId, publishedAfter);
+
+        channelVideoMap[channelId] = videoIds;
+        allVideoIds.push(...videoIds);
+
+        channelResults.push(buildChannelRecord(ch, resolved, videoIds));
+      } catch (err) {
+        if (err.message.includes('Quota exceeded')) {
+          showToast('YouTube API quota exceeded. Try again tomorrow.', 'error');
+          break;
+        }
+        channelResults.push(buildChannelRecord(ch, null, []));
+      }
+
+      updateProgress(i + 1, CHANNELS.length, `${i + 1} / ${CHANNELS.length} channels`);
+    }
+
+    if (appState.fetchCancelled) {
+      updateState({ isFetching: false });
+      showProgress(false);
+      return;
+    }
+
+    // Fetch all video details in batches
+    updateProgress(0, 1, 'Loading video details...');
+    const videoBatches = chunk(allVideoIds, MAX_VIDEOS_PER_REQUEST);
+    const allVideoDetails = [];
+
+    for (let i = 0; i < videoBatches.length; i++) {
+      if (appState.fetchCancelled) break;
+      updateProgress(i, videoBatches.length, `Video batch ${i + 1} / ${videoBatches.length}`);
+      try {
+        const details = await fetchVideoStatsBatch(videoBatches[i]);
+        allVideoDetails.push(...details);
+      } catch (err) {
+        if (err.message.includes('Quota exceeded')) {
+          showToast('Quota exceeded while loading video details.', 'error');
+          break;
+        }
+      }
+    }
+
+    // Enrich channels with video stats (immutable)
+    const enrichedChannels = channelResults.map(ch => {
+      if (!ch.channelId) return ch;
+      const videoIds = channelVideoMap[ch.channelId] || [];
+      const videos = allVideoDetails.filter(v => videoIds.includes(v.id));
+      return enrichChannelWithVideos(ch, videos);
+    });
+
+    // Build viral video list
+    const viralVideos = allVideoDetails
+      .map(v => buildVideoRecord(v, enrichedChannels))
+      .filter(v => v.views >= getThreshold())
+      .sort((a, b) => b.views - a.views);
+
+    // Save to state and cache
+    updateState({
+      channels: enrichedChannels,
+      videos: viralVideos,
+      isFetching: false,
+    });
+
+    localStorage.setItem(STORAGE_KEYS.CHANNEL_DATA, JSON.stringify(enrichedChannels));
+    localStorage.setItem(STORAGE_KEYS.VIDEO_DATA, JSON.stringify(viralVideos));
+    localStorage.setItem(STORAGE_KEYS.CACHE_TIMESTAMP, String(Date.now()));
+
+    showProgress(false);
+    renderAll();
+    analyzeAndUpdateIdeas();
+    showToast('Daten aktualisiert', 'success');
+  } catch (err) {
+    updateState({ isFetching: false });
+    showProgress(false);
+    showToast(err.message, 'error');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DATA RECORD BUILDERS (pure, no mutation)
+   ═══════════════════════════════════════════════════════════════ */
+function buildChannelRecord(config, ytData, videoIds) {
+  if (!ytData) {
+    return Object.freeze({
+      name: config.name,
+      handle: config.handle,
+      channelId: null,
+      thumbnail: null,
+      subscribers: 0,
+      totalViews: 0,
+      videoCount: videoIds.length,
+      avgViews: 0,
+      bestViews: 0,
+      viewSubRatio: 0,
+      trend: 'neutral',
+    });
+  }
+
+  const stats = ytData.statistics || {};
+  return Object.freeze({
+    name: config.name,
+    handle: config.handle,
+    channelId: ytData.id,
+    thumbnail: ytData.snippet?.thumbnails?.default?.url || null,
+    subscribers: parseInt(stats.subscriberCount || '0', 10),
+    totalViews: parseInt(stats.viewCount || '0', 10),
+    videoCount: videoIds.length,
+    avgViews: 0,
+    bestViews: 0,
+    viewSubRatio: 0,
+    trend: 'neutral',
+  });
+}
+
+function enrichChannelWithVideos(channel, videos) {
+  if (videos.length === 0) return channel;
+
+  const viewCounts = videos.map(v => parseInt(v.statistics?.viewCount || '0', 10));
+  const totalViews = viewCounts.reduce((sum, v) => sum + v, 0);
+  const avgViews = Math.round(totalViews / viewCounts.length);
+  const bestViews = Math.max(...viewCounts);
+  const subs = channel.subscribers || 1;
+  const viewSubRatio = (avgViews / subs) * 100;
+
+  // Simple trend: if avg views > 50% of subscriber count = up
+  const trend = viewSubRatio > 50 ? 'up' : viewSubRatio < 10 ? 'down' : 'neutral';
+
+  return Object.freeze({
+    ...channel,
+    videoCount: videos.length,
+    avgViews,
+    bestViews,
+    viewSubRatio,
+    trend,
+  });
+}
+
+function parseDurationSeconds(isoDuration) {
+  if (!isoDuration) return 0;
+  const match = isoDuration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!match) return 0;
+  const hours = parseInt(match[1] || '0', 10);
+  const minutes = parseInt(match[2] || '0', 10);
+  const seconds = parseInt(match[3] || '0', 10);
+  return hours * 3600 + minutes * 60 + seconds;
+}
+
+function classifyFormat(durationSeconds) {
+  if (durationSeconds <= 0) return 'unknown';
+  return durationSeconds <= 60 ? 'short' : 'long';
+}
+
+function formatDuration(seconds) {
+  if (seconds <= 0) return '--:--';
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
+
+function buildVideoRecord(ytVideo, channels) {
+  const stats = ytVideo.statistics || {};
+  const snippet = ytVideo.snippet || {};
+  const contentDetails = ytVideo.contentDetails || {};
+  const channelId = snippet.channelId;
+  const matchingChannel = channels.find(c => c.channelId === channelId);
+  const durationSeconds = parseDurationSeconds(contentDetails.duration);
+
+  return Object.freeze({
+    id: ytVideo.id,
+    title: snippet.title || 'Untitled',
+    channelName: matchingChannel?.name || snippet.channelTitle || 'Unknown',
+    channelId: channelId,
+    thumbnail: snippet.thumbnails?.high?.url || snippet.thumbnails?.medium?.url || '',
+    url: `https://www.youtube.com/watch?v=${ytVideo.id}`,
+    views: parseInt(stats.viewCount || '0', 10),
+    likes: parseInt(stats.likeCount || '0', 10),
+    comments: parseInt(stats.commentCount || '0', 10),
+    publishedAt: snippet.publishedAt || '',
+    durationSeconds,
+    duration: formatDuration(durationSeconds),
+    format: classifyFormat(durationSeconds),
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SORTING
+   ═══════════════════════════════════════════════════════════════ */
+function sortChannels(channels, column, direction) {
+  const sorted = [...channels].sort((a, b) => {
+    let valA = a[column];
+    let valB = b[column];
+
+    if (column === 'name') {
+      valA = (valA || '').toLowerCase();
+      valB = (valB || '').toLowerCase();
+      return direction === 'asc'
+        ? valA.localeCompare(valB)
+        : valB.localeCompare(valA);
+    }
+
+    if (column === 'trend') {
+      const order = { up: 3, neutral: 2, down: 1 };
+      valA = order[valA] || 0;
+      valB = order[valB] || 0;
+    }
+
+    return direction === 'asc' ? valA - valB : valB - valA;
+  });
+  return sorted;
+}
+
+function handleSort(column) {
+  const newDirection =
+    appState.sortColumn === column && appState.sortDirection === 'desc'
+      ? 'asc'
+      : 'desc';
+  updateState({ sortColumn: column, sortDirection: newDirection });
+  renderChannelTable();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER: KPIs
+   ═══════════════════════════════════════════════════════════════ */
+function renderKPIs() {
+  const channels = appState.channels;
+  const videos = appState.videos;
+  const threshold = getThreshold();
+
+  document.getElementById('kpiChannels').textContent = channels.length || '--';
+
+  const viralCount = videos.length;
+  document.getElementById('kpiViral').textContent = viralCount > 0 ? formatGerman(viralCount) : '--';
+  document.getElementById('kpiViralSub').textContent = `above ${formatCompact(threshold)}`;
+
+  if (viralCount > 0) {
+    const avgViralViews = Math.round(
+      videos.reduce((sum, v) => sum + v.views, 0) / viralCount
+    );
+    document.getElementById('kpiAvgViews').textContent = formatCompact(avgViralViews);
+  } else {
+    document.getElementById('kpiAvgViews').textContent = '--';
+  }
+
+  const withData = channels.filter(c => c.videoCount > 0);
+  if (withData.length > 0) {
+    const top = [...withData].sort((a, b) => b.avgViews - a.avgViews)[0];
+    document.getElementById('kpiTopChannel').textContent = top.name;
+    document.getElementById('kpiTopChannelSub').textContent = `${formatCompact(top.avgViews)} avg views`;
+  } else {
+    document.getElementById('kpiTopChannel').textContent = '--';
+    document.getElementById('kpiTopChannelSub').textContent = '';
+  }
+
+  const totalVids = channels.reduce((sum, c) => sum + c.videoCount, 0);
+  document.getElementById('kpiFrequency').textContent = totalVids > 0 ? formatGerman(totalVids) : '--';
+
+  // Tab badges
+  document.getElementById('tabChannelCount').textContent = channels.length;
+  document.getElementById('tabViralCount').textContent = viralCount;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER: CHANNEL TABLE
+   ═══════════════════════════════════════════════════════════════ */
+function renderChannelTable() {
+  const channels = appState.channels;
+  const tbody = document.getElementById('channelTableBody');
+  const emptyEl = document.getElementById('channelsEmpty');
+  const tableWrap = document.querySelector('.table-wrap');
+
+  if (channels.length === 0) {
+    tableWrap.style.display = 'none';
+    emptyEl.style.display = 'block';
+    return;
+  }
+
+  tableWrap.style.display = 'block';
+  emptyEl.style.display = 'none';
+
+  // Update sort indicators
+  document.querySelectorAll('.channel-table th').forEach(th => {
+    const col = th.dataset.sort;
+    const arrow = th.querySelector('.sort-arrow');
+    if (col === appState.sortColumn) {
+      th.classList.add('sorted');
+      arrow.textContent = appState.sortDirection === 'asc' ? '\u25B2' : '\u25BC';
+    } else {
+      th.classList.remove('sorted');
+      arrow.textContent = '';
+    }
+  });
+
+  const sorted = sortChannels(channels, appState.sortColumn, appState.sortDirection);
+
+  const rows = sorted.map(ch => {
+    const trendClass = ch.trend === 'up' ? 'trend-up' : ch.trend === 'down' ? 'trend-down' : 'trend-neutral';
+    const trendIcon = ch.trend === 'up' ? '\u25B2' : ch.trend === 'down' ? '\u25BC' : '\u2500';
+
+    const avatarContent = ch.thumbnail
+      ? `<img src="${escapeHtml(ch.thumbnail)}" alt="" loading="lazy">`
+      : escapeHtml(getInitials(ch.name));
+
+    return `<tr>
+      <td>
+        <div class="channel-cell">
+          <div class="channel-avatar">${avatarContent}</div>
+          <div>
+            <div class="channel-name">${escapeHtml(ch.name)}</div>
+            <div class="channel-handle">${escapeHtml(ch.handle)}</div>
+          </div>
+        </div>
+      </td>
+      <td class="num">${formatCompact(ch.subscribers)}</td>
+      <td class="num">${ch.videoCount}</td>
+      <td class="num">${formatCompact(ch.avgViews)}</td>
+      <td class="num">${formatCompact(ch.bestViews)}</td>
+      <td class="num">${formatPercent(ch.viewSubRatio)}</td>
+      <td class="${trendClass}" style="font-size:0.9rem;text-align:center;">${trendIcon}</td>
+    </tr>`;
+  }).join('');
+
+  tbody.innerHTML = rows;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER: VIRAL FEED
+   ═══════════════════════════════════════════════════════════════ */
+function renderViralFeed() {
+  const videos = appState.videos;
+  const grid = document.getElementById('viralGrid');
+  const emptyEl = document.getElementById('viralEmpty');
+
+  if (videos.length === 0) {
+    grid.style.display = 'none';
+    emptyEl.style.display = 'block';
+    return;
+  }
+
+  grid.style.display = 'grid';
+  emptyEl.style.display = 'none';
+
+  const cards = videos.map(v => {
+    const tier = v.views >= 500000 ? 'mega' : v.views >= 100000 ? 'hot' : 'warm';
+    const cardClass = v.views >= 500000 ? 'tier-mega' : v.views >= 100000 ? 'tier-hot' : '';
+    const formatBadge = v.format === 'short'
+      ? '<span class="format-badge format-short">SHORT</span>'
+      : v.format === 'long'
+        ? '<span class="format-badge format-long">LONG</span>'
+        : '';
+
+    return `<a href="${escapeHtml(v.url)}" target="_blank" rel="noopener noreferrer" class="viral-card ${cardClass}">
+      <div class="viral-thumb">
+        ${v.thumbnail ? `<img src="${escapeHtml(v.thumbnail)}" alt="" loading="lazy">` : ''}
+        <div class="viral-views-badge ${tier}">${formatCompact(v.views)} views</div>
+        ${formatBadge}
+        <span class="viral-duration num">${escapeHtml(v.duration)}</span>
+      </div>
+      <div class="viral-body">
+        <div class="viral-title">${escapeHtml(v.title)}</div>
+        <div class="viral-meta">
+          <span class="viral-channel">${escapeHtml(v.channelName)}</span>
+          <div class="viral-stats">
+            <span class="viral-stat">\u2764 ${formatCompact(v.likes)}</span>
+            <span class="viral-stat">\uD83D\uDCAC ${formatCompact(v.comments)}</span>
+          </div>
+        </div>
+        <div class="viral-date">${formatDate(v.publishedAt)}</div>
+      </div>
+    </a>`;
+  }).join('');
+
+  grid.innerHTML = cards;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER: IDEAS
+   ═══════════════════════════════════════════════════════════════ */
+function renderIdeen() {
+  const ideas = appState.ideas;
+  const grid = document.getElementById('ideaGrid');
+  const emptyEl = document.getElementById('ideenEmpty');
+
+  document.getElementById('tabIdeenCount').textContent = ideas.length;
+
+  if (ideas.length === 0) {
+    grid.style.display = 'none';
+    emptyEl.style.display = 'block';
+    return;
+  }
+
+  grid.style.display = 'grid';
+  emptyEl.style.display = 'none';
+
+  const cards = ideas.map((idea, idx) => {
+    const sourceList = idea.sourceVideos
+      .slice(0, 3)
+      .map(v => `<div class="idea-source-item">${escapeHtml(v.title)}</div>`)
+      .join('');
+
+    return `<div class="idea-card" onclick="openScriptModal(${idx})">
+      <div class="idea-rank">IDEE #${idx + 1}</div>
+      <div class="idea-topic">${escapeHtml(idea.topic)}</div>
+      <div class="idea-angle">${escapeHtml(idea.suggestedAngle)}</div>
+      <div class="idea-metrics">
+        <div class="idea-metric">
+          <span class="idea-metric-value">${idea.videoCount}</span> Videos
+        </div>
+        <div class="idea-metric">
+          <span class="idea-metric-value">${formatCompact(idea.totalViews)}</span> Views gesamt
+        </div>
+      </div>
+      <div class="idea-sources">
+        <div class="idea-source-label">Basierend auf</div>
+        ${sourceList}
+      </div>
+      <div class="idea-cta">Skript generieren &rarr;</div>
+    </div>`;
+  }).join('');
+
+  grid.innerHTML = cards;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCRIPT MODAL LOGIC
+   ═══════════════════════════════════════════════════════════════ */
+function openScriptModal(ideaIndex) {
+  const idea = appState.ideas[ideaIndex];
+  if (!idea) return;
+
+  updateState({ currentIdea: idea });
+
+  document.getElementById('scriptTopic').textContent = idea.topic;
+  document.getElementById('scriptTopicSub').textContent = idea.suggestedAngle;
+
+  const overlay = document.getElementById('scriptOverlay');
+  const loading = document.getElementById('scriptLoading');
+  const result = document.getElementById('scriptResult');
+  const error = document.getElementById('scriptError');
+
+  overlay.classList.add('active');
+  loading.style.display = 'block';
+  result.style.display = 'none';
+  error.style.display = 'none';
+
+  const cached = getCachedScript(idea.topic);
+  if (cached) {
+    renderScriptContent(cached);
+    return;
+  }
+
+  runScriptGeneration(idea);
+}
+
+async function runScriptGeneration(idea) {
+  const loading = document.getElementById('scriptLoading');
+  const result = document.getElementById('scriptResult');
+  const error = document.getElementById('scriptError');
+
+  loading.style.display = 'block';
+  result.style.display = 'none';
+  error.style.display = 'none';
+
+  try {
+    const scriptRecord = await generateScript(idea);
+    cacheScript(idea.topic, scriptRecord);
+    renderScriptContent(scriptRecord);
+  } catch (err) {
+    loading.style.display = 'none';
+    error.style.display = 'block';
+    error.textContent = err.message;
+  }
+}
+
+function renderScriptContent(scriptRecord) {
+  const loading = document.getElementById('scriptLoading');
+  const result = document.getElementById('scriptResult');
+
+  loading.style.display = 'none';
+  result.style.display = 'block';
+
+  document.getElementById('scriptTitles').textContent = scriptRecord.titles;
+  document.getElementById('scriptText').textContent = scriptRecord.script;
+
+  // Show word count and estimated duration
+  const wc = scriptRecord.wordCount || 0;
+  const estMinutes = Math.round(wc / 130);
+  document.getElementById('scriptWordCount').textContent = `${wc.toLocaleString('de-DE')} Wörter ~ ${estMinutes} Min.`;
+
+  // Show TTS button if ElevenLabs is configured
+  const btnTTS = document.getElementById('btnTTS');
+  btnTTS.style.display = getElevenLabsKey() ? 'inline-flex' : 'none';
+
+  // Reset audio section
+  document.getElementById('audioSection').style.display = 'none';
+  document.getElementById('audioPlayerWrap').style.display = 'none';
+  document.getElementById('audioProgress').style.display = 'none';
+  document.getElementById('audioError').style.display = 'none';
+}
+
+function closeScriptModal() {
+  // Release audio blob URL if any
+  const player = document.getElementById('audioPlayer');
+  if (player.src && player.src.startsWith('blob:')) {
+    URL.revokeObjectURL(player.src);
+    player.src = '';
+  }
+  document.getElementById('scriptOverlay').classList.remove('active');
+  updateState({ currentIdea: null });
+}
+
+function regenerateScript() {
+  const idea = appState.currentIdea;
+  if (!idea) return;
+
+  // Clear cache for this topic
+  try {
+    const cache = JSON.parse(localStorage.getItem(STORAGE_KEYS.SCRIPT_CACHE) || '{}');
+    const key = getScriptCacheKey(idea.topic);
+    const { [key]: _, ...rest } = cache;
+    localStorage.setItem(STORAGE_KEYS.SCRIPT_CACHE, JSON.stringify(rest));
+  } catch (_) {}
+
+  runScriptGeneration(idea);
+}
+
+function copySection(elementId) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+
+  const text = el.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('In Zwischenablage kopiert', 'success');
+  }).catch(() => {
+    // Fallback
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    showToast('In Zwischenablage kopiert', 'success');
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER: FOOTER / QUOTA
+   ═══════════════════════════════════════════════════════════════ */
+function renderFooter() {
+  const used = appState.quotaUsed;
+  const remaining = Math.max(0, DAILY_QUOTA - used);
+  const pct = used / DAILY_QUOTA;
+
+  document.getElementById('quotaLabel').textContent =
+    `Quota: ~${formatGerman(remaining)} / ${formatGerman(DAILY_QUOTA)} remaining`;
+
+  const dot = document.getElementById('quotaDot');
+  dot.className = 'quota-dot' + (pct > 0.9 ? ' critical' : pct > 0.6 ? ' warn' : '');
+
+  const cacheTs = getCacheTimestamp();
+  document.getElementById('cacheStatus').textContent = cacheTs > 0
+    ? `Cache: ${formatTimestamp(cacheTs)}`
+    : 'Cache: empty';
+
+  document.getElementById('lastRefresh').textContent = cacheTs > 0
+    ? `Last refresh: ${formatTimestamp(cacheTs)}`
+    : 'No data yet';
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER ALL
+   ═══════════════════════════════════════════════════════════════ */
+function renderAll() {
+  renderKPIs();
+  renderChannelTable();
+  renderViralFeed();
+  renderIdeen();
+  renderFooter();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROGRESS UI
+   ═══════════════════════════════════════════════════════════════ */
+function showProgress(visible) {
+  document.getElementById('progressOverlay').classList.toggle('active', visible);
+}
+
+function updateProgress(current, total, label) {
+  const pct = total > 0 ? Math.round((current / total) * 100) : 0;
+  document.getElementById('progressBar').style.width = `${pct}%`;
+  document.getElementById('progressLabel').textContent = label;
+}
+
+function cancelFetch() {
+  updateState({ fetchCancelled: true });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SETTINGS MODAL
+   ═══════════════════════════════════════════════════════════════ */
+function openSettings() {
+  document.getElementById('apiKeyInput').value = getApiKey();
+  document.getElementById('anthropicKeyInput').value = getAnthropicKey();
+  document.getElementById('elevenlabsKeyInput').value = getElevenLabsKey();
+  document.getElementById('styleInput').value = getStylePrompt();
+  // Restore saved voice selection
+  const savedVoice = getElevenLabsVoice();
+  if (savedVoice && getElevenLabsKey()) {
+    loadElevenLabsVoices().then(() => {
+      document.getElementById('elevenlabsVoiceSelect').value = savedVoice;
+    });
+  }
+  document.getElementById('thresholdRange').value = getThreshold();
+  document.getElementById('thresholdValue').textContent = formatCompact(getThreshold());
+  document.getElementById('lookbackRange').value = getLookback();
+  document.getElementById('lookbackValue').textContent = getLookback();
+  document.getElementById('settingsModal').classList.add('active');
+}
+
+function closeSettings() {
+  document.getElementById('settingsModal').classList.remove('active');
+}
+
+function saveSettings() {
+  const apiKey = document.getElementById('apiKeyInput').value.trim();
+  const anthropicKey = document.getElementById('anthropicKeyInput').value.trim();
+  const elevenlabsKey = document.getElementById('elevenlabsKeyInput').value.trim();
+  const elevenlabsVoice = document.getElementById('elevenlabsVoiceSelect').value;
+  const stylePrompt = document.getElementById('styleInput').value.trim();
+  const threshold = parseInt(document.getElementById('thresholdRange').value, 10);
+  const lookback = parseInt(document.getElementById('lookbackRange').value, 10);
+
+  if (!apiKey) {
+    showToast('YouTube API Key wird benötigt', 'warn');
+    return;
+  }
+
+  if (!apiKey.startsWith('AIza')) {
+    showToast('YouTube API Key sollte mit "AIza" beginnen', 'warn');
+  }
+
+  if (anthropicKey && !anthropicKey.startsWith('sk-ant-')) {
+    showToast('Anthropic API Key sollte mit "sk-ant-" beginnen', 'warn');
+  }
+
+  localStorage.setItem(STORAGE_KEYS.API_KEY, apiKey);
+  localStorage.setItem(STORAGE_KEYS.ANTHROPIC_KEY, anthropicKey);
+  localStorage.setItem(STORAGE_KEYS.ELEVENLABS_KEY, elevenlabsKey);
+  if (elevenlabsVoice) {
+    localStorage.setItem(STORAGE_KEYS.ELEVENLABS_VOICE, elevenlabsVoice);
+  }
+  if (stylePrompt) {
+    localStorage.setItem(STORAGE_KEYS.STYLE_PROMPT, stylePrompt);
+  }
+  localStorage.setItem(STORAGE_KEYS.THRESHOLD, String(threshold));
+  localStorage.setItem(STORAGE_KEYS.LOOKBACK, String(lookback));
+
+  closeSettings();
+  showToast('Einstellungen gespeichert', 'success');
+
+  // Re-filter viral videos with new threshold
+  if (appState.videos.length > 0 || appState.channels.length > 0) {
+    refilterViralVideos();
+    renderAll();
+  }
+}
+
+function refilterViralVideos() {
+  const threshold = getThreshold();
+  const cached = localStorage.getItem(STORAGE_KEYS.VIDEO_DATA);
+  if (!cached) return;
+
+  try {
+    const allVideos = JSON.parse(cached);
+    const filtered = allVideos
+      .filter(v => v.views >= threshold)
+      .sort((a, b) => b.views - a.views);
+    updateState({ videos: filtered });
+  } catch (_) {
+    // Ignore parse errors
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TAB SWITCHING
+   ═══════════════════════════════════════════════════════════════ */
+function switchTab(tabName) {
+  updateState({ activeTab: tabName });
+
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tabName);
+  });
+
+  document.querySelectorAll('.panel').forEach(p => {
+    const id = p.id.replace('panel', '').toLowerCase();
+    p.classList.toggle('active', id === tabName);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CACHE MANAGEMENT
+   ═══════════════════════════════════════════════════════════════ */
+function clearCache() {
+  localStorage.removeItem(STORAGE_KEYS.CHANNEL_DATA);
+  localStorage.removeItem(STORAGE_KEYS.VIDEO_DATA);
+  localStorage.removeItem(STORAGE_KEYS.CACHE_TIMESTAMP);
+  localStorage.removeItem(STORAGE_KEYS.SCRIPT_CACHE);
+  localStorage.setItem(STORAGE_KEYS.QUOTA_USED, '0');
+  updateState({ channels: [], videos: [], ideas: [], quotaUsed: 0 });
+  renderAll();
+  showToast('Cache gelöscht', 'success');
+}
+
+function loadFromCache() {
+  try {
+    const channelData = localStorage.getItem(STORAGE_KEYS.CHANNEL_DATA);
+    const videoData = localStorage.getItem(STORAGE_KEYS.VIDEO_DATA);
+
+    if (channelData) {
+      const channels = JSON.parse(channelData).map(c => Object.freeze(c));
+      const threshold = getThreshold();
+      let videos = [];
+
+      if (videoData) {
+        const allVideos = JSON.parse(videoData);
+        videos = allVideos
+          .filter(v => v && typeof v.views === 'number' && v.views >= threshold)
+          .sort((a, b) => b.views - a.views)
+          .map(v => Object.freeze(v));
+      }
+
+      updateState({ channels, videos });
+      renderAll();
+      analyzeAndUpdateIdeas();
+      return true;
+    }
+  } catch (err) {
+    showToast('Cache konnte nicht geladen werden', 'warn');
+  }
+  return false;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HANDLERS
+   ═══════════════════════════════════════════════════════════════ */
+function handleRefresh() {
+  fetchAllData();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   XSS PREVENTION
+   ═══════════════════════════════════════════════════════════════ */
+function escapeHtml(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   EVENT SETUP
+   ═══════════════════════════════════════════════════════════════ */
+function initEventListeners() {
+  // Tab clicks
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+  });
+
+  // Column sorting
+  document.querySelectorAll('.channel-table th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => handleSort(th.dataset.sort));
+  });
+
+  // Settings sliders
+  document.getElementById('thresholdRange').addEventListener('input', (e) => {
+    document.getElementById('thresholdValue').textContent = formatCompact(parseInt(e.target.value, 10));
+  });
+
+  document.getElementById('lookbackRange').addEventListener('input', (e) => {
+    document.getElementById('lookbackValue').textContent = e.target.value;
+  });
+
+  // Close modal on overlay click
+  document.getElementById('settingsModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeSettings();
+  });
+
+  // Close script modal on overlay click
+  document.getElementById('scriptOverlay').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeScriptModal();
+  });
+
+  // Keyboard escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeScriptModal();
+      closeSettings();
+      if (appState.isFetching) cancelFetch();
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INITIALIZATION
+   ═══════════════════════════════════════════════════════════════ */
+function init() {
+  initEventListeners();
+  renderFooter();
+
+  const hasCache = loadFromCache();
+
+  if (!getApiKey()) {
+    openSettings();
+  } else if (!hasCache || !isCacheValid()) {
+    // Show cached data but indicate it may be stale
+    if (hasCache) {
+      showToast('Cache is older than 4 hours. Consider refreshing.', 'warn');
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
