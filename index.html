@@ -1252,6 +1252,219 @@ body {
 }
 
 .pulse { animation: pulse 2s ease-in-out infinite; }
+
+/* ═══════════════════════════════════════════════════════════════
+   SCRIPT PRODUCTION PIPELINE — Tabs, Transcript Input, Progress
+   ═══════════════════════════════════════════════════════════════ */
+.script-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--reef);
+  margin-bottom: calc(var(--unit) * 2);
+}
+
+.script-tab {
+  padding: calc(var(--unit) * 1.2) calc(var(--unit) * 2.5);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--fossil);
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-sans);
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.script-tab:hover { color: var(--sediment); }
+
+.script-tab.active {
+  color: var(--idea);
+  border-bottom-color: var(--idea);
+}
+
+.script-tab-content {
+  display: none;
+}
+
+.script-tab-content.active {
+  display: block;
+}
+
+.transcript-input-wrap {
+  margin-bottom: calc(var(--unit) * 3);
+}
+
+.transcript-input {
+  width: 100%;
+  min-height: 200px;
+  padding: calc(var(--unit) * 2);
+  background: var(--abyss);
+  border: 1px solid var(--reef);
+  border-radius: var(--radius);
+  color: var(--bone);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.transcript-input:focus {
+  border-color: var(--idea);
+  box-shadow: 0 0 0 2px var(--idea-dim);
+}
+
+.transcript-input::placeholder {
+  color: var(--fossil);
+}
+
+.transcript-source-info {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 2);
+  margin-bottom: calc(var(--unit) * 2);
+  padding: calc(var(--unit) * 1.5) calc(var(--unit) * 2);
+  background: var(--shelf);
+  border: 1px solid var(--reef);
+  border-radius: var(--radius);
+  font-size: 0.78rem;
+  color: var(--sediment);
+}
+
+.transcript-source-info a {
+  color: var(--signal);
+  text-decoration: none;
+}
+
+.transcript-source-info a:hover {
+  text-decoration: underline;
+}
+
+.transcript-hint {
+  font-size: 0.72rem;
+  color: var(--fossil);
+  margin-top: calc(var(--unit) * 0.8);
+  line-height: 1.5;
+}
+
+.pipeline-progress {
+  margin-bottom: calc(var(--unit) * 3);
+}
+
+.pipeline-steps {
+  display: flex;
+  gap: 2px;
+  margin-bottom: calc(var(--unit) * 1.5);
+}
+
+.pipeline-step {
+  flex: 1;
+  height: 4px;
+  background: var(--shelf);
+  border-radius: 2px;
+  transition: background 0.3s ease;
+}
+
+.pipeline-step.done {
+  background: var(--idea);
+  box-shadow: 0 0 6px var(--idea-dim);
+}
+
+.pipeline-step.active {
+  background: var(--idea);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.pipeline-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--sediment);
+}
+
+.translation-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.translation-table th {
+  background: var(--shelf);
+  padding: calc(var(--unit) * 1.2) calc(var(--unit) * 2);
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fossil);
+  border-bottom: 1px solid var(--trench);
+}
+
+.translation-table td {
+  padding: calc(var(--unit) * 1.5) calc(var(--unit) * 2);
+  border-bottom: 1px solid var(--reef);
+  vertical-align: top;
+  line-height: 1.6;
+  color: var(--bone);
+}
+
+.translation-table tr:last-child td {
+  border-bottom: none;
+}
+
+.translation-table td:first-child {
+  width: 50%;
+  border-right: 1px solid var(--reef);
+}
+
+.translation-table td:last-child {
+  width: 50%;
+  color: var(--sediment);
+}
+
+.vo-script-content {
+  background: var(--abyss);
+  border: 1px solid var(--reef);
+  border-radius: var(--radius);
+  padding: calc(var(--unit) * 2);
+  font-size: 0.82rem;
+  color: var(--bone);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.vo-script-content .mood-tag {
+  display: inline;
+  color: var(--idea);
+  font-weight: 600;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+}
+
+.editor-content {
+  width: 100%;
+  min-height: 400px;
+  padding: calc(var(--unit) * 2);
+  background: var(--abyss);
+  border: 1px solid var(--reef);
+  border-radius: var(--radius);
+  color: var(--bone);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  line-height: 1.7;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.editor-content:focus {
+  border-color: var(--idea);
+  box-shadow: 0 0 0 2px var(--idea-dim);
+}
 </style>
 </head>
 <body>
@@ -1466,30 +1679,94 @@ body {
       <button class="modal-close" onclick="closeScriptModal()">&times;</button>
     </div>
     <div id="scriptBody">
-      <div class="script-loading" id="scriptLoading">
+      <!-- Auto-Analyse Info (replaces manual transcript input) -->
+      <div id="autoAnalyseSection" style="display:none;">
+        <div class="transcript-source-info" id="transcriptSourceInfo"></div>
+      </div>
+
+      <!-- Pipeline Progress -->
+      <div id="pipelineProgressSection" style="display:none;">
+        <div class="pipeline-progress">
+          <div class="pipeline-steps" id="pipelineSteps">
+            <div class="pipeline-step" data-step="1"></div>
+            <div class="pipeline-step" data-step="2"></div>
+            <div class="pipeline-step" data-step="3"></div>
+            <div class="pipeline-step" data-step="4"></div>
+          </div>
+          <div class="pipeline-label" id="pipelineLabel">Initialisiere...</div>
+        </div>
+        <div class="script-loading">
+          <div class="script-loading-spinner"></div>
+          <div class="script-loading-text" id="pipelineLoadingText">Pipeline wird gestartet...</div>
+        </div>
+      </div>
+
+      <!-- Legacy loading (for from-scratch generation) -->
+      <div class="script-loading" id="scriptLoading" style="display:none;">
         <div class="script-loading-spinner"></div>
         <div class="script-loading-text">Skript wird generiert...</div>
       </div>
+
+      <!-- Results: 3-tab view -->
       <div id="scriptResult" style="display:none;">
         <div class="script-section">
           <div class="script-section-header">
             <span class="script-section-label">Titel-Vorschläge</span>
-            <button class="script-copy-btn" onclick="copySection('scriptTitles')">Kopieren</button>
+            <div style="display:flex;align-items:center;gap:calc(var(--unit) * 2);">
+              <span class="script-word-count" id="scriptWordCount" style="font-family:var(--font-mono);font-size:0.7rem;color:var(--fossil);"></span>
+              <button class="script-copy-btn" onclick="copySection('scriptTitles')">Kopieren</button>
+            </div>
           </div>
           <div class="script-content" id="scriptTitles"></div>
         </div>
-        <div class="script-section">
-          <div class="script-section-header">
-            <span class="script-section-label">Skript</span>
-            <div style="display:flex;align-items:center;gap:calc(var(--unit) * 2);">
-              <span class="script-word-count" id="scriptWordCount" style="font-family:var(--font-mono);font-size:0.7rem;color:var(--fossil);"></span>
+
+        <!-- 3-Tab Script View -->
+        <div class="script-tabs" id="scriptTabBar">
+          <button class="script-tab active" data-stab="translation" onclick="switchScriptTab('translation')">Translation</button>
+          <button class="script-tab" data-stab="vo-script" onclick="switchScriptTab('vo-script')">VO-Script</button>
+          <button class="script-tab" data-stab="editor" onclick="switchScriptTab('editor')">Editor (EN)</button>
+        </div>
+
+        <div class="script-tab-content active" id="stabTranslation">
+          <div class="script-section-header" style="margin-bottom:calc(var(--unit) * 1.5);">
+            <span class="script-section-label">DE / EN Absatz-Tabelle</span>
+            <button class="script-copy-btn" onclick="copyTranslationTable()">Tabelle kopieren</button>
+          </div>
+          <div style="overflow-x:auto;border:1px solid var(--reef);border-radius:var(--radius);">
+            <table class="translation-table" id="translationTableBody"></table>
+          </div>
+        </div>
+
+        <div class="script-tab-content" id="stabVoScript">
+          <div class="script-section-header" style="margin-bottom:calc(var(--unit) * 1.5);">
+            <span class="script-section-label">VO-Script mit Mood-Tags</span>
+            <button class="script-copy-btn" onclick="copySection('voScriptText')">Kopieren</button>
+          </div>
+          <div class="vo-script-content" id="voScriptText"></div>
+        </div>
+
+        <div class="script-tab-content" id="stabEditor">
+          <div class="script-section-header" style="margin-bottom:calc(var(--unit) * 1.5);">
+            <span class="script-section-label">Editor (reiner Text)</span>
+            <button class="script-copy-btn" onclick="copyEditorText()">Kopieren</button>
+          </div>
+          <textarea class="editor-content" id="editorText"></textarea>
+        </div>
+
+        <!-- Legacy single-view fallback (for from-scratch scripts) -->
+        <div id="scriptLegacyView" style="display:none;">
+          <div class="script-section">
+            <div class="script-section-header">
+              <span class="script-section-label">Skript</span>
               <button class="script-copy-btn" onclick="copySection('scriptText')">Kopieren</button>
             </div>
+            <div class="script-content" id="scriptText"></div>
           </div>
-          <div class="script-content" id="scriptText"></div>
         </div>
       </div>
+
       <div class="script-error" id="scriptError" style="display:none;"></div>
+
       <!-- Audio Section -->
       <div class="audio-section" id="audioSection" style="display:none;">
         <div class="audio-section-header">
@@ -1512,10 +1789,11 @@ body {
         <div id="audioError" style="display:none;color:var(--decline);font-size:0.82rem;"></div>
       </div>
     </div>
-    <div class="script-actions">
+    <div class="script-actions" id="scriptActions">
       <button class="btn" onclick="closeScriptModal()">Schließen</button>
       <button class="btn btn-tts" id="btnTTS" onclick="generateTTS()" style="display:none;">Vertonen</button>
-      <button class="btn btn-idea" id="btnRegenerate" onclick="regenerateScript()">Neu generieren</button>
+      <button class="btn btn-idea" id="btnRegenerate" onclick="regenerateScript()" style="display:none;">Neu generieren</button>
+      <button class="btn btn-idea" id="btnFromScratch" onclick="generateFromScratch()" style="display:none;">Von Grund auf</button>
     </div>
   </div>
 </div>
@@ -1826,7 +2104,7 @@ async function claudeGenerate(systemPrompt, userPrompt) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   SCRIPT GENERATION
+   SCRIPT GENERATION (from scratch — legacy)
    ═══════════════════════════════════════════════════════════════ */
 async function generateScript(idea) {
   const style = getStylePrompt();
@@ -1894,6 +2172,575 @@ function parseScriptResponse(text, topic) {
     script,
     wordCount,
     generatedAt: Date.now(),
+    isPipeline: false,
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SOURCE VIDEO SELECTION
+   ═══════════════════════════════════════════════════════════════ */
+function pickBestSourceVideo(idea) {
+  const videos = idea.sourceVideos || [];
+  if (videos.length === 0) return null;
+
+  // Look up full video records (with durationSeconds) from appState
+  const allVideos = appState.videos;
+  const enriched = videos.map(sv => {
+    const full = allVideos.find(v => v.id === sv.id);
+    return Object.freeze({
+      ...sv,
+      durationSeconds: full ? full.durationSeconds : 0,
+      url: `https://www.youtube.com/watch?v=${sv.id}`,
+    });
+  });
+
+  // Filter to 8-15 minute range (targeting 10-12 min)
+  const inRange = enriched.filter(v =>
+    v.durationSeconds >= 480 && v.durationSeconds <= 900
+  );
+
+  if (inRange.length > 0) {
+    // Sort by closeness to 660s (11 min) then by views desc
+    const scored = [...inRange].sort((a, b) => {
+      const distA = Math.abs(a.durationSeconds - 660);
+      const distB = Math.abs(b.durationSeconds - 660);
+      if (distA !== distB) return distA - distB;
+      return b.views - a.views;
+    });
+    return scored[0];
+  }
+
+  // Fallback: pick the longest one (most content-rich)
+  const byDuration = [...enriched].sort((a, b) =>
+    b.durationSeconds - a.durationSeconds
+  );
+  return byDuration[0];
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TRANSCRIPT CLEANING
+   ═══════════════════════════════════════════════════════════════ */
+function cleanTranscript(rawText) {
+  let text = rawText;
+
+  // Remove YouTube timestamp lines (e.g., "0:00", "1:23:45", etc.)
+  text = text.replace(/^\d{1,2}:\d{2}(?::\d{2})?\s*$/gm, '');
+
+  // Remove inline timestamps at start of lines
+  text = text.replace(/^\d{1,2}:\d{2}(?::\d{2})?\s+/gm, '');
+
+  // Remove speaker labels like "[Music]", "[Applause]", etc.
+  text = text.replace(/\[(?:Music|Applause|Laughter|Inaudible)\]/gi, '');
+
+  // Collapse multiple newlines
+  text = text.replace(/\n{3,}/g, '\n\n');
+
+  // Collapse multiple spaces
+  text = text.replace(/  +/g, ' ');
+
+  return text.trim();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PRODUCTION PIPELINE (transcript-based)
+   ═══════════════════════════════════════════════════════════════ */
+function updatePipelineProgress(step, totalSteps, label) {
+  const steps = document.querySelectorAll('#pipelineSteps .pipeline-step');
+  steps.forEach((el, idx) => {
+    const stepNum = idx + 1;
+    if (stepNum < step) {
+      el.className = 'pipeline-step done';
+    } else if (stepNum === step) {
+      el.className = 'pipeline-step active';
+    } else {
+      el.className = 'pipeline-step';
+    }
+  });
+
+  const labelEl = document.getElementById('pipelineLabel');
+  if (labelEl) labelEl.textContent = label;
+
+  const loadingText = document.getElementById('pipelineLoadingText');
+  if (loadingText) loadingText.textContent = label;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   AUTOMATIC TRANSCRIPT FETCH
+   ═══════════════════════════════════════════════════════════════ */
+async function fetchTranscript(videoId) {
+  const CORS_PROXIES = [
+    'https://api.allorigins.win/raw?url=',
+    'https://corsproxy.io/?url=',
+  ];
+
+  let html = '';
+  let lastError = null;
+
+  for (const proxy of CORS_PROXIES) {
+    try {
+      const videoUrl = encodeURIComponent(`https://www.youtube.com/watch?v=${videoId}`);
+      const res = await fetch(proxy + videoUrl, { signal: AbortSignal.timeout(15000) });
+      if (res.ok) {
+        html = await res.text();
+        break;
+      }
+    } catch (err) {
+      lastError = err;
+    }
+  }
+
+  if (!html) {
+    throw new Error('Video-Seite konnte nicht geladen werden. Bitte später erneut versuchen.');
+  }
+
+  // Extract captionTracks from ytInitialPlayerResponse
+  const captionMatch = html.match(/"captionTracks"\s*:\s*(\[.*?\])/);
+  if (!captionMatch) {
+    throw new Error('Kein Transkript für dieses Video verfügbar. Das Video hat möglicherweise keine Untertitel.');
+  }
+
+  let tracks;
+  try {
+    tracks = JSON.parse(captionMatch[1]);
+  } catch (_) {
+    throw new Error('Transkript-Daten konnten nicht gelesen werden.');
+  }
+
+  if (!tracks || tracks.length === 0) {
+    throw new Error('Keine Untertitel-Spuren gefunden.');
+  }
+
+  // Prefer English, then any available track
+  const englishTrack = tracks.find(t => t.languageCode === 'en')
+    || tracks.find(t => t.languageCode?.startsWith('en'))
+    || tracks[0];
+
+  const captionUrl = englishTrack.baseUrl;
+  if (!captionUrl) {
+    throw new Error('Keine Untertitel-URL gefunden.');
+  }
+
+  // Fetch the captions XML via proxy
+  let captionXml = '';
+  for (const proxy of CORS_PROXIES) {
+    try {
+      const res = await fetch(proxy + encodeURIComponent(captionUrl), { signal: AbortSignal.timeout(15000) });
+      if (res.ok) {
+        captionXml = await res.text();
+        break;
+      }
+    } catch (_) {}
+  }
+
+  if (!captionXml) {
+    throw new Error('Untertitel konnten nicht heruntergeladen werden.');
+  }
+
+  // Parse XML to plain text
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(captionXml, 'text/xml');
+  const textNodes = doc.querySelectorAll('text');
+
+  if (!textNodes || textNodes.length === 0) {
+    throw new Error('Leeres Transkript erhalten.');
+  }
+
+  const rawText = Array.from(textNodes)
+    .map(node => node.textContent || '')
+    .join(' ');
+
+  // Decode HTML entities and clean up
+  const decoded = rawText
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\n/g, ' ');
+
+  const cleaned = cleanTranscript(decoded);
+
+  if (cleaned.length < 100) {
+    throw new Error('Transkript zu kurz — möglicherweise nur Auto-Captions ohne Inhalt.');
+  }
+
+  return Object.freeze({
+    text: cleaned,
+    language: englishTrack.languageCode || 'unknown',
+    wordCount: cleaned.split(/\s+/).filter(w => w.length > 0).length,
+  });
+}
+
+async function startAutoAnalysis(idea) {
+  const bestVideo = pickBestSourceVideo(idea);
+
+  // Show source info
+  const sourceInfoEl = document.getElementById('transcriptSourceInfo');
+  const autoSection = document.getElementById('autoAnalyseSection');
+
+  if (bestVideo) {
+    const durationStr = bestVideo.durationSeconds > 0
+      ? ` (${formatDuration(bestVideo.durationSeconds)})`
+      : '';
+    sourceInfoEl.innerHTML =
+      `Referenz-Video: <a href="${escapeHtml(bestVideo.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(bestVideo.title)}</a>${durationStr} — ${escapeHtml(bestVideo.channelName)}`;
+  } else {
+    sourceInfoEl.innerHTML = `Thema: <strong>${escapeHtml(idea.topic)}</strong>`;
+  }
+
+  autoSection.style.display = 'block';
+  document.getElementById('pipelineProgressSection').style.display = 'block';
+  document.getElementById('scriptResult').style.display = 'none';
+  document.getElementById('scriptError').style.display = 'none';
+
+  try {
+    if (!bestVideo) {
+      // No suitable source video — fall back to from-scratch generation
+      showToast('Kein passendes Quell-Video gefunden — generiere von Grund auf', 'warn');
+      runScriptGeneration(idea);
+      return;
+    }
+
+    // Step 1: Fetch transcript automatically
+    updatePipelineProgress(1, 4, 'Schritt 1/4: Transkript wird geladen...');
+    const transcriptData = await fetchTranscript(bestVideo.id);
+    showToast(`Transkript geladen: ${transcriptData.wordCount} Wörter (${transcriptData.language})`, 'success');
+
+    // Steps 2-4: Run the production pipeline
+    const result = await runProductionPipeline(idea, transcriptData.text);
+    cacheScript(idea.topic, result);
+    renderPipelineResult(result);
+
+  } catch (err) {
+    document.getElementById('pipelineProgressSection').style.display = 'none';
+    const errorEl = document.getElementById('scriptError');
+    errorEl.style.display = 'block';
+
+    // Offer fallback to from-scratch if transcript fetch fails
+    errorEl.innerHTML = `${escapeHtml(err.message)}<br><br>
+      <button class="btn btn-idea" onclick="generateFromScratch()" style="margin-top:var(--unit);">
+        Stattdessen von Grund auf generieren
+      </button>`;
+    showToast(err.message, 'error');
+  }
+}
+
+async function runProductionPipeline(idea, transcript) {
+  const sourceInfo = idea.sourceVideos
+    .slice(0, 3)
+    .map(v => `"${v.title}" (${formatCompact(v.views)} Views, ${v.channelName})`)
+    .join(', ');
+
+  // ── STEP 2: Translate EN → DE ──
+  updatePipelineProgress(2, 4, 'Schritt 2/4: Übersetze ins Deutsche...');
+
+  const translateSystemPrompt = `Du bist ein professioneller Übersetzer für YouTube-Skripte von Englisch nach Deutsch.
+
+REGELN:
+- Übersetze den gesamten Text ins Deutsche
+- Behalte die natürliche Sprache bei — kein steifes "Übersetzer-Deutsch"
+- Wenn der Text bereits auf Deutsch ist, gib ihn unverändert zurück
+- Behalte alle Fakten, Zahlen und Aussagen exakt bei
+- Kürze NICHTS, ergänze NICHTS
+- Gib NUR den übersetzten Text zurück, keine Kommentare`;
+
+  const translatedText = await claudeGenerate(
+    translateSystemPrompt,
+    `Übersetze diesen YouTube-Transkript-Text ins Deutsche. Wenn er bereits deutsch ist, gib ihn unverändert zurück.\n\nOriginal-Transkript:\n\n${transcript}`
+  );
+
+  // ── STEP 3: Rewrite + Fine-tune + Germanize (combined) ──
+  updatePipelineProgress(3, 4, 'Schritt 3/4: Umschreiben & Optimieren...');
+
+  const rewriteSystemPrompt = `Du bist ein erfahrener deutscher YouTube-Skript-Autor für einen Wildlife-Kanal.
+
+DEIN KANAL-PROFIL:
+- Nische: Lebende Tiere, ausgestorbene Tiere, prähistorische Tiere, Tiefsee
+- Zielgruppe: Deutschsprachig, neugierig, 18-45 Jahre
+
+STIL-REGELN (STRIKT EINHALTEN):
+1. INTRO: Maximal 50 Wörter. Direkt ins Thema, kein Smalltalk.
+2. Du-Form durchgehend
+3. KEINE Begrüßung ("Hallo", "Willkommen", "Hey Leute")
+4. KEINE Call-to-Actions ("Abonnieren", "Like", "Kommentiere")
+5. KEINE leeren Phrasen ("Es ist kein Geheimnis", "Stell dir vor", "Wusstest du")
+6. KEIN Pathos, KEIN Clickbait-Sprech
+7. KEINE Anglizismen — idiomatisches Deutsch verwenden
+8. Direkte, aktive Sätze. Kein Passiv wo vermeidbar.
+9. Modern, sachlich, packend — wie ein guter Sachbuch-Autor
+10. Jede Zahl bekommt einen greifbaren Vergleich (z.B. "3 Tonnen — so schwer wie zwei Kleinwagen")
+11. Fakten prüfbar halten, keine Übertreibungen
+12. Absätze kurz halten (3-5 Sätze)
+
+STRUKTUR:
+- [HOOK] — 2-3 packende Sätze, die sofort fesseln
+- [INTRO] — Max 50 Wörter, Thema vorstellen
+- Hauptteil in logischen Abschnitten
+- [FAZIT] — Kurz, reflektiv, ohne CTA
+
+AUFGABE:
+Schreibe das gegebene Transkript in ein professionelles YouTube-Skript um.
+- Behalte ALLE Fakten, Zahlen und Kernaussagen bei
+- Strukturiere den Text neu für optimale Spannung und AVD (Average View Duration)
+- Entferne Wiederholungen und Füllwörter
+- Mache den Text packend und gut vorlesbar
+- Ziel: ca. 2.000 Wörter / 12-15 Minuten Sprechzeit
+- Gib NUR den fertigen Skript-Text zurück
+
+ANTI-ANGLIZISMUS-REGELN:
+- "Features" → "Merkmale" / "Eigenschaften"
+- "Facts" → "Fakten"
+- "Highlights" → "Höhepunkte"
+- "Community" → "Gemeinschaft" (oder weglassen)
+- "Content" → "Inhalt"
+- "Check out" → weglassen
+- "amazing" → "bemerkenswert" / "erstaunlich"
+- Alle englischen Lehnwörter durch deutsche Alternativen ersetzen`;
+
+  const rewrittenText = await claudeGenerate(
+    rewriteSystemPrompt,
+    `Schreibe dieses Transkript in ein professionelles deutsches YouTube-Skript um.\n\nThema: "${idea.topic}"\nBlickwinkel: ${idea.suggestedAngle}\nQuell-Videos: ${sourceInfo}\n\nTranskript (bereits auf Deutsch):\n\n${translatedText}`
+  );
+
+  // ── STEP 4: Create translation table + mood tags ──
+  updatePipelineProgress(4, 4, 'Schritt 4/4: Translation-Tabelle & Mood-Tags...');
+
+  const formatSystemPrompt = `Du bist ein Formatierungs-Assistent für YouTube-Skripte.
+
+AUFGABE 1 — TRANSLATION TABLE:
+Erstelle eine Absatz-für-Absatz Übersetzungstabelle DE→EN.
+Verwende EXAKT dieses Format für jeden Absatz:
+|||DE|||Deutscher Absatz hier|||EN|||English paragraph here|||END|||
+
+AUFGABE 2 — VO-SCRIPT MIT MOOD-TAGS:
+Füge vor jedem Absatz einen ElevenLabs-Mood-Tag ein.
+Verwende diese Tags: [dramatic], [calm expert], [intense], [slow deliberate], [tense], [building tension], [matter-of-fact], [reflective], [curious], [surprised], [urgent], [ominous], [warm], [awestruck]
+Wähle den Tag passend zum emotionalen Gehalt des Absatzes.
+
+AUFGABE 3 — TITEL-VORSCHLÄGE:
+Erstelle 5 deutsche Titel-Vorschläge für das Video.
+- Sachlich, kein Clickbait
+- Maximal 60 Zeichen
+- Neugier wecken ohne zu übertreiben
+
+FORMAT DER AUSGABE (STRIKT EINHALTEN):
+
+## TITEL
+1. Titel eins
+2. Titel zwei
+3. Titel drei
+4. Titel vier
+5. Titel fünf
+
+## TRANSLATION
+|||DE|||Absatz 1 deutsch|||EN|||Paragraph 1 english|||END|||
+|||DE|||Absatz 2 deutsch|||EN|||Paragraph 2 english|||END|||
+(... für jeden Absatz)
+
+## VO-SCRIPT
+[mood-tag] Absatz 1 text hier.
+
+[mood-tag] Absatz 2 text hier.
+
+(... für jeden Absatz)`;
+
+  const formatResult = await claudeGenerate(
+    formatSystemPrompt,
+    `Formatiere dieses fertige deutsche YouTube-Skript in die drei Ausgabeformate.\n\nThema: "${idea.topic}"\n\nSkript:\n\n${rewrittenText}`
+  );
+
+  // ── CLIENT-SIDE: Parse the formatted output into 3 tabs ──
+  return parsePipelineOutput(formatResult, idea.topic, rewrittenText);
+}
+
+function parsePipelineOutput(rawOutput, topic, plainScript) {
+  // Extract titles
+  const titleMatch = rawOutput.match(/## TITEL\s*\n([\s\S]*?)(?=## TRANSLATION|## VO-SCRIPT|$)/i);
+  const titles = titleMatch ? titleMatch[1].trim() : '';
+
+  // Extract translation table entries
+  const translationMatch = rawOutput.match(/## TRANSLATION\s*\n([\s\S]*?)(?=## VO-SCRIPT|$)/i);
+  const translationRaw = translationMatch ? translationMatch[1].trim() : '';
+
+  const translationPairs = [];
+  const pairRegex = /\|\|\|DE\|\|\|([\s\S]*?)\|\|\|EN\|\|\|([\s\S]*?)\|\|\|END\|\|\|/g;
+  let match;
+  while ((match = pairRegex.exec(translationRaw)) !== null) {
+    translationPairs.push(Object.freeze({
+      de: match[1].trim(),
+      en: match[2].trim(),
+    }));
+  }
+
+  // Extract VO-Script
+  const voMatch = rawOutput.match(/## VO-SCRIPT\s*\n([\s\S]*?)$/i);
+  const voScript = voMatch ? voMatch[1].trim() : plainScript;
+
+  // Build editor text in ENGLISH (for the video editor)
+  const editorTextEN = translationPairs.length > 0
+    ? translationPairs.map(p => p.en).join('\n\n')
+    : plainScript;
+
+  // Build plain German text (strip mood tags from VO script)
+  const plainDE = voScript
+    .replace(/\[(dramatic|calm expert|intense|slow deliberate|tense|building tension|matter-of-fact|reflective|curious|surprised|urgent|ominous|warm|awestruck)\]\s*/gi, '')
+    .trim();
+
+  // Count words (German script)
+  const spokenText = plainDE
+    .replace(/\[(?:HOOK|INTRO|KAPITEL \d+[^\]]*|FAZIT|OUTRO)\]/gi, '')
+    .replace(/\[[^\]]*\]/g, '')
+    .replace(/^#{1,3}\s+.*/gm, '')
+    .replace(/\*+/g, '');
+  const wordCount = spokenText.split(/\s+/).filter(w => w.length > 0).length;
+
+  return Object.freeze({
+    topic,
+    titles,
+    script: plainDE,
+    editorTextEN,
+    voScript,
+    translationPairs,
+    wordCount,
+    generatedAt: Date.now(),
+    isPipeline: true,
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCRIPT TAB SWITCHING
+   ═══════════════════════════════════════════════════════════════ */
+function switchScriptTab(tabName) {
+  document.querySelectorAll('.script-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.stab === tabName);
+  });
+
+  const tabMap = {
+    'translation': 'stabTranslation',
+    'vo-script': 'stabVoScript',
+    'editor': 'stabEditor',
+  };
+
+  Object.entries(tabMap).forEach(([key, id]) => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('active', key === tabName);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER PIPELINE RESULT
+   ═══════════════════════════════════════════════════════════════ */
+function renderPipelineResult(record) {
+  document.getElementById('pipelineProgressSection').style.display = 'none';
+  document.getElementById('autoAnalyseSection').style.display = 'none';
+  document.getElementById('scriptLoading').style.display = 'none';
+
+  const result = document.getElementById('scriptResult');
+  result.style.display = 'block';
+
+  // Titles
+  document.getElementById('scriptTitles').textContent = record.titles;
+
+  // Word count
+  const wc = record.wordCount || 0;
+  const estMinutes = Math.round(wc / 130);
+  document.getElementById('scriptWordCount').textContent =
+    `${wc.toLocaleString('de-DE')} Wörter ~ ${estMinutes} Min.`;
+
+  if (record.isPipeline) {
+    // Show 3-tab view, hide legacy
+    document.getElementById('scriptTabBar').style.display = 'flex';
+    document.getElementById('scriptLegacyView').style.display = 'none';
+
+    // Translation table
+    renderTranslationTable(record.translationPairs || []);
+
+    // VO-Script with mood tags highlighted
+    const voEl = document.getElementById('voScriptText');
+    voEl.innerHTML = formatVoScriptWithMoodTags(record.voScript || record.script);
+
+    // Editor (English text for the video editor)
+    document.getElementById('editorText').value = record.editorTextEN || record.script;
+
+    // Default to VO-Script tab
+    switchScriptTab('vo-script');
+  } else {
+    // Legacy single-view
+    document.getElementById('scriptTabBar').style.display = 'none';
+    document.getElementById('scriptLegacyView').style.display = 'block';
+    document.getElementById('stabTranslation').classList.remove('active');
+    document.getElementById('stabVoScript').classList.remove('active');
+    document.getElementById('stabEditor').classList.remove('active');
+    document.getElementById('scriptText').textContent = record.script;
+  }
+
+  // Show action buttons
+  const btnTTS = document.getElementById('btnTTS');
+  btnTTS.style.display = getElevenLabsKey() ? 'inline-flex' : 'none';
+  document.getElementById('btnRegenerate').style.display = 'inline-flex';
+  document.getElementById('btnFromScratch').style.display = 'inline-flex';
+
+  // Reset audio section
+  document.getElementById('audioSection').style.display = 'none';
+  document.getElementById('audioPlayerWrap').style.display = 'none';
+  document.getElementById('audioProgress').style.display = 'none';
+  document.getElementById('audioError').style.display = 'none';
+}
+
+function renderTranslationTable(pairs) {
+  const table = document.getElementById('translationTableBody');
+  if (pairs.length === 0) {
+    table.innerHTML = '<tr><td colspan="2" style="padding:16px;color:var(--fossil);text-align:center;">Keine Translation-Daten verfügbar</td></tr>';
+    return;
+  }
+
+  const headerRow = '<tr><th>Deutsch</th><th>English</th></tr>';
+  const rows = pairs.map(p =>
+    `<tr><td>${escapeHtml(p.de)}</td><td>${escapeHtml(p.en)}</td></tr>`
+  ).join('');
+
+  table.innerHTML = headerRow + rows;
+}
+
+function formatVoScriptWithMoodTags(text) {
+  // Highlight mood tags with special styling
+  const escaped = escapeHtml(text);
+  return escaped.replace(
+    /\[(dramatic|calm expert|intense|slow deliberate|tense|building tension|matter-of-fact|reflective|curious|surprised|urgent|ominous|warm|awestruck)\]/gi,
+    '<span class="mood-tag">[$1]</span>'
+  );
+}
+
+function copyTranslationTable() {
+  const table = document.getElementById('translationTableBody');
+  if (!table) return;
+
+  const rows = table.querySelectorAll('tr');
+  const lines = [];
+  rows.forEach((row, idx) => {
+    if (idx === 0) return; // skip header
+    const cells = row.querySelectorAll('td');
+    if (cells.length >= 2) {
+      lines.push(`DE: ${cells[0].textContent.trim()}\nEN: ${cells[1].textContent.trim()}\n`);
+    }
+  });
+
+  const text = lines.join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Tabelle in Zwischenablage kopiert', 'success');
+  }).catch(() => {
+    showToast('Kopieren fehlgeschlagen', 'error');
+  });
+}
+
+function copyEditorText() {
+  const el = document.getElementById('editorText');
+  if (!el) return;
+
+  navigator.clipboard.writeText(el.value).then(() => {
+    showToast('In Zwischenablage kopiert', 'success');
+  }).catch(() => {
+    showToast('Kopieren fehlgeschlagen', 'error');
   });
 }
 
@@ -2032,13 +2879,21 @@ async function generateTTS() {
     return;
   }
 
+  // Use VO-script (German) for TTS, NOT the English editor text
+  const voEl = document.getElementById('voScriptText');
   const scriptEl = document.getElementById('scriptText');
-  if (!scriptEl || !scriptEl.textContent.trim()) {
+
+  let rawScript = '';
+  if (voEl && voEl.textContent.trim()) {
+    rawScript = voEl.textContent;
+  } else if (scriptEl && scriptEl.textContent.trim()) {
+    rawScript = scriptEl.textContent;
+  }
+
+  if (!rawScript.trim()) {
     showToast('Kein Skript vorhanden', 'warn');
     return;
   }
-
-  const rawScript = scriptEl.textContent;
   const ttsText = prepareScriptForTTS(rawScript);
 
   // Show audio section with progress
@@ -2342,6 +3197,7 @@ function generateAngle(cluster, index) {
       title: v.title,
       views: v.views,
       channelName: v.channelName,
+      durationSeconds: v.durationSeconds || 0,
     })),
     totalViews: cluster.totalViews,
     videoCount: cluster.videoCount,
@@ -2842,23 +3698,31 @@ function openScriptModal(ideaIndex) {
   document.getElementById('scriptTopicSub').textContent = idea.suggestedAngle;
 
   const overlay = document.getElementById('scriptOverlay');
-  const loading = document.getElementById('scriptLoading');
-  const result = document.getElementById('scriptResult');
-  const error = document.getElementById('scriptError');
+
+  // Hide all sections initially
+  document.getElementById('autoAnalyseSection').style.display = 'none';
+  document.getElementById('pipelineProgressSection').style.display = 'none';
+  document.getElementById('scriptLoading').style.display = 'none';
+  document.getElementById('scriptResult').style.display = 'none';
+  document.getElementById('scriptError').style.display = 'none';
+  document.getElementById('btnRegenerate').style.display = 'none';
+  document.getElementById('btnFromScratch').style.display = 'none';
+  document.getElementById('btnTTS').style.display = 'none';
 
   overlay.classList.add('active');
-  loading.style.display = 'block';
-  result.style.display = 'none';
-  error.style.display = 'none';
 
+  // Check for cached result first
   const cached = getCachedScript(idea.topic);
   if (cached) {
-    renderScriptContent(cached);
+    renderPipelineResult(cached);
     return;
   }
 
-  runScriptGeneration(idea);
+  // Start automatic analysis (fetch transcript + pipeline)
+  startAutoAnalysis(idea);
 }
+
+/* showTranscriptInput replaced by startAutoAnalysis — transcript is fetched automatically */
 
 async function runScriptGeneration(idea) {
   const loading = document.getElementById('scriptLoading');
@@ -2872,7 +3736,7 @@ async function runScriptGeneration(idea) {
   try {
     const scriptRecord = await generateScript(idea);
     cacheScript(idea.topic, scriptRecord);
-    renderScriptContent(scriptRecord);
+    renderPipelineResult(scriptRecord);
   } catch (err) {
     loading.style.display = 'none';
     error.style.display = 'block';
@@ -2880,30 +3744,30 @@ async function runScriptGeneration(idea) {
   }
 }
 
+function generateFromScratch() {
+  const idea = appState.currentIdea;
+  if (!idea) return;
+
+  // Clear cache for this topic
+  try {
+    const cache = JSON.parse(localStorage.getItem(STORAGE_KEYS.SCRIPT_CACHE) || '{}');
+    const key = getScriptCacheKey(idea.topic);
+    const { [key]: _, ...rest } = cache;
+    localStorage.setItem(STORAGE_KEYS.SCRIPT_CACHE, JSON.stringify(rest));
+  } catch (_) {}
+
+  // Hide everything, show loading
+  document.getElementById('autoAnalyseSection').style.display = 'none';
+  document.getElementById('pipelineProgressSection').style.display = 'none';
+  document.getElementById('scriptResult').style.display = 'none';
+  document.getElementById('scriptError').style.display = 'none';
+
+  runScriptGeneration(idea);
+}
+
 function renderScriptContent(scriptRecord) {
-  const loading = document.getElementById('scriptLoading');
-  const result = document.getElementById('scriptResult');
-
-  loading.style.display = 'none';
-  result.style.display = 'block';
-
-  document.getElementById('scriptTitles').textContent = scriptRecord.titles;
-  document.getElementById('scriptText').textContent = scriptRecord.script;
-
-  // Show word count and estimated duration
-  const wc = scriptRecord.wordCount || 0;
-  const estMinutes = Math.round(wc / 130);
-  document.getElementById('scriptWordCount').textContent = `${wc.toLocaleString('de-DE')} Wörter ~ ${estMinutes} Min.`;
-
-  // Show TTS button if ElevenLabs is configured
-  const btnTTS = document.getElementById('btnTTS');
-  btnTTS.style.display = getElevenLabsKey() ? 'inline-flex' : 'none';
-
-  // Reset audio section
-  document.getElementById('audioSection').style.display = 'none';
-  document.getElementById('audioPlayerWrap').style.display = 'none';
-  document.getElementById('audioProgress').style.display = 'none';
-  document.getElementById('audioError').style.display = 'none';
+  // Delegate to renderPipelineResult which handles both legacy and pipeline
+  renderPipelineResult(scriptRecord);
 }
 
 function closeScriptModal() {
@@ -2929,7 +3793,15 @@ function regenerateScript() {
     localStorage.setItem(STORAGE_KEYS.SCRIPT_CACHE, JSON.stringify(rest));
   } catch (_) {}
 
-  runScriptGeneration(idea);
+  // Restart automatic analysis
+  document.getElementById('scriptResult').style.display = 'none';
+  document.getElementById('pipelineProgressSection').style.display = 'none';
+  document.getElementById('scriptError').style.display = 'none';
+  document.getElementById('btnRegenerate').style.display = 'none';
+  document.getElementById('btnFromScratch').style.display = 'none';
+  document.getElementById('btnTTS').style.display = 'none';
+
+  startAutoAnalysis(idea);
 }
 
 function copySection(elementId) {
