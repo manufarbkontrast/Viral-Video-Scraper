@@ -1733,9 +1733,9 @@ body {
       <button class="modal-close" onclick="closeSettings()">&times;</button>
     </div>
     <div class="form-group">
-      <label class="form-label" for="apiKeyInput">YouTube API Key</label>
-      <input class="form-input" id="apiKeyInput" type="password" placeholder="AIza...">
-      <div class="form-hint">Stored locally in your browser. Never sent anywhere except YouTube API.</div>
+      <label class="form-label" for="apiKeyInput">YouTube API Keys <span style="color:var(--fossil);font-weight:400;">(einer pro Zeile, automatische Rotation bei Quota-Limit)</span></label>
+      <textarea class="form-input" id="apiKeyInput" rows="3" placeholder="AIza...&#10;AIza... (optional zweiter Key)&#10;AIza... (optional dritter Key)" style="resize:vertical;font-family:var(--font-mono);font-size:0.75rem;"></textarea>
+      <div class="form-hint">Mehrere Keys = mehr Quota. Bei Limit wird automatisch zum nächsten Key gewechselt.</div>
     </div>
     <div class="form-group">
       <label class="form-label" for="anthropicKeyInput">Anthropic API Key</label>
@@ -1932,6 +1932,8 @@ body {
    ═══════════════════════════════════════════════════════════════ */
 const STORAGE_KEYS = Object.freeze({
   API_KEY: 'feldstation_api_key',
+  API_KEYS: 'feldstation_api_keys',
+  API_KEY_INDEX: 'feldstation_api_key_idx',
   THRESHOLD: 'feldstation_threshold',
   LOOKBACK: 'feldstation_lookback',
   CHANNEL_DATA: 'feldstation_channel_data',
@@ -1945,7 +1947,7 @@ const STORAGE_KEYS = Object.freeze({
   ELEVENLABS_VOICE: 'feldstation_elevenlabs_voice',
 });
 
-const CACHE_TTL_MS = 4 * 60 * 60 * 1000; // 4 hours
+const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours — saves quota
 const DAILY_QUOTA = 50000;
 const YT_API_BASE = 'https://www.googleapis.com/youtube/v3';
 const MAX_VIDEOS_PER_REQUEST = 50;
@@ -2089,7 +2091,37 @@ function showToast(message, type = 'error') {
    UTILITY: LOCAL STORAGE HELPERS
    ═══════════════════════════════════════════════════════════════ */
 function getApiKey() {
+  // Multi-key support: try current key from rotation, fallback to single key
+  const keys = getAllApiKeys();
+  if (keys.length > 0) {
+    const idx = parseInt(localStorage.getItem(STORAGE_KEYS.API_KEY_INDEX) || '0', 10);
+    return keys[idx % keys.length] || '';
+  }
   return localStorage.getItem(STORAGE_KEYS.API_KEY) || '';
+}
+
+function getAllApiKeys() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEYS.API_KEYS);
+    if (!stored) {
+      // Migrate single key to multi-key format
+      const singleKey = localStorage.getItem(STORAGE_KEYS.API_KEY) || '';
+      return singleKey ? [singleKey] : [];
+    }
+    return JSON.parse(stored).filter(k => k && k.trim());
+  } catch (_) {
+    return [];
+  }
+}
+
+function rotateApiKey() {
+  const keys = getAllApiKeys();
+  if (keys.length <= 1) return false;
+  const currentIdx = parseInt(localStorage.getItem(STORAGE_KEYS.API_KEY_INDEX) || '0', 10);
+  const nextIdx = (currentIdx + 1) % keys.length;
+  localStorage.setItem(STORAGE_KEYS.API_KEY_INDEX, String(nextIdx));
+  showToast(`API Key gewechselt → Key ${nextIdx + 1}/${keys.length}`, 'warn');
+  return true;
 }
 
 function getThreshold() {
@@ -2135,7 +2167,7 @@ function trackQuota(cost) {
 /* ═══════════════════════════════════════════════════════════════
    YOUTUBE API LAYER
    ═══════════════════════════════════════════════════════════════ */
-async function ytFetch(endpoint, params) {
+async function ytFetch(endpoint, params, _retried = false) {
   const apiKey = getApiKey();
   if (!apiKey) throw new Error('No API key configured');
 
@@ -2148,7 +2180,16 @@ async function ytFetch(endpoint, params) {
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     const errMsg = body?.error?.message || `HTTP ${res.status}`;
-    if (res.status === 403) throw new Error(`Quota exceeded or API key invalid: ${errMsg}`);
+
+    // On quota exceeded: try rotating to next API key
+    if (res.status === 403 && !_retried) {
+      const rotated = rotateApiKey();
+      if (rotated) {
+        return ytFetch(endpoint, params, true);
+      }
+    }
+
+    if (res.status === 403) throw new Error(`Quota exceeded (alle Keys aufgebraucht): ${errMsg}`);
     if (res.status === 400) throw new Error(`Bad request: ${errMsg}`);
     throw new Error(`YouTube API error: ${errMsg}`);
   }
@@ -4269,7 +4310,9 @@ function cancelFetch() {
    SETTINGS MODAL
    ═══════════════════════════════════════════════════════════════ */
 function openSettings() {
-  document.getElementById('apiKeyInput').value = getApiKey();
+  // Load multi-key list into textarea
+  const allKeys = getAllApiKeys();
+  document.getElementById('apiKeyInput').value = allKeys.join('\n');
   document.getElementById('anthropicKeyInput').value = getAnthropicKey();
   document.getElementById('elevenlabsKeyInput').value = getElevenLabsKey();
   document.getElementById('styleInput').value = getStylePrompt();
@@ -4292,7 +4335,7 @@ function closeSettings() {
 }
 
 function saveSettings() {
-  const apiKey = document.getElementById('apiKeyInput').value.trim();
+  const apiKeyRaw = document.getElementById('apiKeyInput').value.trim();
   const anthropicKey = document.getElementById('anthropicKeyInput').value.trim();
   const elevenlabsKey = document.getElementById('elevenlabsKeyInput').value.trim();
   const elevenlabsVoice = document.getElementById('elevenlabsVoiceSelect').value;
@@ -4300,20 +4343,31 @@ function saveSettings() {
   const threshold = parseInt(document.getElementById('thresholdRange').value, 10);
   const lookback = parseInt(document.getElementById('lookbackRange').value, 10);
 
-  if (!apiKey) {
-    showToast('YouTube API Key wird benötigt', 'warn');
+  // Parse multi-key input (one per line)
+  const apiKeys = apiKeyRaw
+    .split('\n')
+    .map(k => k.trim())
+    .filter(k => k.length > 0);
+
+  if (apiKeys.length === 0) {
+    showToast('Mindestens ein YouTube API Key wird benötigt', 'warn');
     return;
   }
 
-  if (!apiKey.startsWith('AIza')) {
-    showToast('YouTube API Key sollte mit "AIza" beginnen', 'warn');
+  const invalidKeys = apiKeys.filter(k => !k.startsWith('AIza'));
+  if (invalidKeys.length > 0) {
+    showToast(`${invalidKeys.length} Key(s) beginnen nicht mit "AIza"`, 'warn');
   }
 
   if (anthropicKey && !anthropicKey.startsWith('sk-ant-')) {
     showToast('Anthropic API Key sollte mit "sk-ant-" beginnen', 'warn');
   }
 
-  localStorage.setItem(STORAGE_KEYS.API_KEY, apiKey);
+  // Store multi-key list + first key as fallback
+  localStorage.setItem(STORAGE_KEYS.API_KEYS, JSON.stringify(apiKeys));
+  localStorage.setItem(STORAGE_KEYS.API_KEY, apiKeys[0]);
+  localStorage.setItem(STORAGE_KEYS.API_KEY_INDEX, '0');
+  showToast(`${apiKeys.length} API Key(s) gespeichert`, 'success');
   localStorage.setItem(STORAGE_KEYS.ANTHROPIC_KEY, anthropicKey);
   localStorage.setItem(STORAGE_KEYS.ELEVENLABS_KEY, elevenlabsKey);
   if (elevenlabsVoice) {
@@ -4324,6 +4378,10 @@ function saveSettings() {
   }
   localStorage.setItem(STORAGE_KEYS.THRESHOLD, String(threshold));
   localStorage.setItem(STORAGE_KEYS.LOOKBACK, String(lookback));
+
+  // Reset quota counter on save (new keys = fresh quota)
+  localStorage.setItem(STORAGE_KEYS.QUOTA_USED, '0');
+  updateState({ quotaUsed: 0 });
 
   closeSettings();
   showToast('Einstellungen gespeichert', 'success');
