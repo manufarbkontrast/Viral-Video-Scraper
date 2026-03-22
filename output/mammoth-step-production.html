@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Production Document — Die Mammut-Steppe</title>
+<style>
+  @page {
+    size: A4;
+    margin: 20mm;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #111;
+    background: #fff;
+    margin: 0;
+    padding: 20mm;
+  }
+  h1 {
+    font-size: 22pt;
+    margin-bottom: 4px;
+    border-bottom: 3px solid #111;
+    padding-bottom: 8px;
+  }
+  h2 {
+    font-size: 16pt;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    color: #222;
+  }
+  h3 {
+    font-size: 13pt;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    color: #333;
+  }
+  .meta {
+    font-size: 10pt;
+    color: #555;
+    margin-bottom: 20px;
+    line-height: 1.8;
+  }
+  .meta a {
+    color: #1a0dab;
+    text-decoration: none;
+  }
+
+  /* Section headers */
+  .section-header {
+    font-size: 20pt;
+    font-weight: bold;
+    background: #111;
+    color: #fff;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    page-break-before: always;
+  }
+  .section-header:first-of-type {
+    page-break-before: avoid;
+  }
+
+  /* Translation table */
+  table.translation {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  table.translation th {
+    background: #333;
+    color: #fff;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 10pt;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  table.translation td {
+    border: 1px solid #999;
+    padding: 12px 14px;
+    vertical-align: top;
+    font-size: 10.5pt;
+    line-height: 1.6;
+  }
+  table.translation tr:nth-child(even) td {
+    background: #f7f7f7;
+  }
+  table.translation td:first-child {
+    width: 50%;
+  }
+  table.translation td:last-child {
+    width: 50%;
+  }
+  .section-label {
+    font-weight: bold;
+    font-size: 9pt;
+    text-transform: uppercase;
+    color: #888;
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* VO Script */
+  .vo-block {
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    border-left: 4px solid #333;
+    background: #fafafa;
+  }
+  .vo-tag {
+    font-family: 'Courier New', monospace;
+    font-size: 9pt;
+    color: #c00;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .vo-text {
+    font-size: 10.5pt;
+    line-height: 1.6;
+  }
+
+  /* Editor boxes */
+  .editor-box {
+    border: 2px solid #333;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    font-size: 10.5pt;
+    line-height: 1.6;
+    background: #fff;
+  }
+  .editor-box .scene-num {
+    font-family: 'Courier New', monospace;
+    font-size: 9pt;
+    color: #999;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  @media print {
+    body {
+      padding: 0;
+    }
+    .section-header {
+      page-break-before: always;
+    }
+    .section-header:first-of-type {
+      page-break-before: avoid;
+    }
+    .editor-box, .vo-block {
+      page-break-inside: avoid;
+    }
+    table.translation tr {
+      page-break-inside: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: TRANSLATION                                        -->
+<!-- ============================================================ -->
+
+<div class="section-header" style="page-break-before: avoid;">Section 1: Translation</div>
+
+<div class="meta">
+  <strong>Remodeling Video:</strong> <a href="https://www.youtube.com/watch?v=XSFSIMPoQT8">https://www.youtube.com/watch?v=XSFSIMPoQT8</a><br>
+  <strong>Titel:</strong> Die Mammut-Steppe: Das Größte Ökosystem Aller Zeiten — Und Was Es Wirklich Zerstörte
+</div>
+
+<table class="translation">
+<thead>
+<tr>
+  <th>Deutsch</th>
+  <th>English</th>
+</tr>
+</thead>
+<tbody>
+
+<!-- HOOK -->
+<tr>
+<td>
+  <span class="section-label">Hook</span>
+  Vor 20.000 Jahren lag dort, wo heute London steht, kein Wald und kein Eis — sondern ein goldenes Meer aus trockenem Gras, breiter als ganz Europa. Das größte Ökosystem der Erdgeschichte. Und es wurde nicht durch einen Asteroiden zerstört. Sondern durch Regen.
+</td>
+<td>
+  <span class="section-label">Hook</span>
+  20,000 years ago, where London stands today, there was no forest and no ice — but a golden sea of dry grass, wider than all of Europe. The largest ecosystem in Earth's history. And it was not destroyed by an asteroid. It was destroyed by rain.
+</td>
+</tr>
+
+<!-- INTRO -->
+<tr>
+<td>
+  <span class="section-label">Intro</span>
+  Die meisten Menschen stellen sich die Eiszeit als lebensfeindliche Schneewüste vor. Das Gegenteil war der Fall. Die Mammut-Steppe erstreckte sich von Spanien über Sibirien bis nach Kanada — ein durchgehender Streifen Land, größer als alle heutigen Kontinente zusammen. Die Dichte an großen Pflanzenfressern übertraf die heutige Serengeti. Mammuts, Wollnashörner, Riesenhirsche, Steppenbisons — Dutzende Tonnen Biomasse pro Quadratkilometer. Dieses System existierte über 100.000 Jahre. Doch dann verschwand es innerhalb weniger Jahrtausende. Nicht wegen der Kälte, nicht wegen der Jäger. Wegen der Feuchtigkeit.
+</td>
+<td>
+  <span class="section-label">Intro</span>
+  Most people imagine the Ice Age as a hostile snow desert. The opposite was true. The mammoth steppe stretched from Spain across Siberia to Canada — one continuous strip of land, larger than all modern continents combined. The density of large herbivores exceeded today's Serengeti. Mammoths, woolly rhinos, giant deer, steppe bison — dozens of tons of biomass per square kilometer. This system existed for over 100,000 years. Then it vanished within a few millennia. Not because of the cold, not because of hunters. Because of moisture.
+</td>
+</tr>
+
+<!-- KAPITEL 1 -->
+<tr>
+<td>
+  <span class="section-label">Kapitel 1: Die Maschine aus Gras und Permafrost</span>
+  Während der letzten Eiszeit lag der Meeresspiegel 120 Meter tiefer als heute — so tief, dass die Nordsee und die Beringstraße trockenes Grasland waren. Das Ergebnis war ein ökologischer Superkontinent, der sich ununterbrochen von der Iberischen Halbinsel bis nach Alaska erstreckte. Der Grund für diesen Reichtum war ein klimatisches Paradox: Trockenheit. Die riesigen Eisschilde über Nordamerika und Nordeuropa entzogen der Atmosphäre so viel Feuchtigkeit, dass kaum Wolken entstanden. Ohne Regen wuchsen keine Wälder. Ohne dicken Schnee blieben Tiere mobil. Der Schnee war so dünn, dass Pflanzenfresser ihn mit den Hufen beiseite schieben konnten.
+</td>
+<td>
+  <span class="section-label">Chapter 1: The Machine of Grass and Permafrost</span>
+  During the last Ice Age, sea levels were 120 meters lower than today — so low that the North Sea and the Bering Strait were dry grassland. The result was an ecological supercontinent stretching uninterrupted from the Iberian Peninsula to Alaska. The reason for this abundance was a climatic paradox: aridity. The massive ice sheets over North America and Northern Europe stripped so much moisture from the atmosphere that clouds barely formed. Without rain, no forests grew. Without thick snow, animals stayed mobile. The snow was so thin that herbivores could push it aside with their hooves.
+</td>
+</tr>
+
+<tr>
+<td>
+  Aber es war kein gewöhnliches Gras. Durch das kalte, trockene Klima trocknete es stehend auf seinen Wurzeln — wie natürliches Heu, das den ganzen Winter über seine Nährstoffe behielt. Analysen aus den Mägen von Mammut-Mumien zeigen: Dieses Gras enthielt so viel Protein und Kohlenhydrate wie hochwertiges Getreide. Die Mammut-Steppe war eine Fabrik, die sich selbst am Laufen hielt. Starker Wind verhinderte Schneeanhäufungen. Sonnenlicht trieb die Photosynthese an. Und die Füße von Millionen Tieren verdichteten den Boden. Unter dem Boden lag Permafrost — eine gefrorene Schicht, die im kurzen Sommer gerade genug Feuchtigkeit freigab, damit Gras wachsen konnte, aber nicht genug für Sümpfe oder Wälder. Eine fragile Balance.
+</td>
+<td>
+  But this was no ordinary grass. In the cold, dry climate, it dried standing on its roots — like natural hay that retained its nutrients throughout winter. Analyses from the stomachs of mammoth mummies show: this grass contained as much protein and carbohydrates as high-quality grain. The mammoth steppe was a factory that kept itself running. Strong wind prevented snow accumulation. Sunlight powered photosynthesis. And the feet of millions of animals compacted the ground. Below the surface lay permafrost — a frozen layer that released just enough moisture in the brief summer for grass to grow, but not enough for swamps or forests. A fragile balance.
+</td>
+</tr>
+
+<tr>
+<td>
+  Hier liegt das entscheidende Detail: Lockerer Schnee isoliert den Boden. Eine Meter dicke Schneedecke hält die Erde 15 bis 20 Grad wärmer als die Luft darüber — so warm wie ein beheiztes Zimmer im Vergleich zur Außentemperatur. Ohne Tiere wäre der Permafrost unter dieser Isolierung aufgetaut und hätte Methan freigesetzt. Doch Millionen Bisons und Pferde trampelten den Schnee flach. Komprimierter Schnee verliert seine Isolationswirkung. Die arktische Kälte von minus 50 Grad drang bis tief in den Boden. Das hielt den Permafrost stabil. Die Tiere schützten buchstäblich das Fundament ihres eigenen Reichs.
+</td>
+<td>
+  Here is the crucial detail: loose snow insulates the ground. A meter of snow keeps the soil 15 to 20 degrees warmer than the air above — as warm as a heated room compared to the outdoor temperature. Without animals, the permafrost underneath this insulation would have thawed and released methane. But millions of bison and horses trampled the snow flat. Compressed snow loses its insulating effect. Arctic cold of minus 50 degrees penetrated deep into the ground. This kept the permafrost stable. The animals literally protected the foundation of their own empire.
+</td>
+</tr>
+
+<!-- KAPITEL 2 -->
+<tr>
+<td>
+  <span class="section-label">Kapitel 2: Architekten und Ingenieure</span>
+  Mammuthus primigenius war nicht einfach ein Elefant, der in die Kälte geraten ist. Diese Art ist das Ergebnis von 5 Millionen Jahren genetischer Feinabstimmung. Ihre Ohren waren nur ein Fünfzehntel so groß wie die eines Afrikanischen Elefanten — winzige Wärmesparfenster. Ein spezielles Protein namens TRPV3 reduzierte die Kälteempfindlichkeit der Haut und förderte dichtes Fellwachstum. Ihr Hämoglobin trug eine Mutation, die Sauerstoff selbst bei Temperaturen nahe dem Gefrierpunkt an das Gewebe abgab. Ohne diese Mutation wären ihre Beine beim stundenlangen Stehen im Schnee abgestorben.
+</td>
+<td>
+  <span class="section-label">Chapter 2: Architects and Engineers</span>
+  Mammuthus primigenius was not simply an elephant that wandered into the cold. This species is the result of 5 million years of genetic fine-tuning. Their ears were only one-fifteenth the size of an African elephant's — tiny heat-saving windows. A special protein called TRPV3 reduced the skin's sensitivity to cold and promoted dense fur growth. Their hemoglobin carried a mutation that released oxygen to tissues even at temperatures near freezing. Without this mutation, their legs would have died from oxygen deprivation during hours of standing in snow.
+</td>
+</tr>
+
+<tr>
+<td>
+  Ihre Stoßzähne — bis zu 4 Meter lang, spiralförmig gebogen — waren die Bulldozer der Eiszeit. Abnutzungsspuren auf Fossilien zeigen: Mammuts schoben sie nicht geradeaus, sondern führten seitliche Schwenkbewegungen aus, um die Eiskruste aufzubrechen. Das war nicht nur für sie selbst überlebenswichtig. Wenn diese Kruste intakt blieb, verhungerten kleinere Arten wie Pferde und Bisons nach einem einzigen Eissturm. Das Wollnashorn übernahm die gleiche Aufgabe in windgeschützten Tälern, wo sich Schnee dick auftürmte. Sein Horn war nicht aus Knochen, sondern aus Keratin — und seltsam flach. Eine spezialisierte Schneeschaufel. Mummifizierte Exemplare aus einer polnischen Wachsmine zeigen einen massiven Fetthöcker auf den Schultern. Kein bloßer Energiespeicher, sondern ein Gegengewicht, das beim stundenlangen Schneeschaufeln mit dem Horn zusätzliche Kraft gab.
+</td>
+<td>
+  Their tusks — up to 4 meters long, spirally curved — were the bulldozers of the Ice Age. Wear marks on fossils show: mammoths did not push them straight forward but performed lateral sweeping motions to break through the ice crust. This was not just vital for their own survival. If this crust remained intact, smaller species like horses and bison starved after a single ice storm. The woolly rhinoceros took on the same role in wind-sheltered valleys where snow piled up thick. Its horn was not made of bone but of keratin — and strangely flat. A specialized snow shovel. Mummified specimens from a Polish wax mine show a massive fat hump on the shoulders. Not merely an energy reserve, but a counterweight that provided additional force during hours of snow-shoveling with the horn.
+</td>
+</tr>
+
+<tr>
+<td>
+  Megaloceros giganteus — der Riesenhirsch — war der Beweis für den Reichtum der Steppe. Sein Geweih spannte 3,6 Meter, breiter als ein Kleinwagen. Jedes Jahr mussten die Männchen 40 Kilogramm Geweih nachwachsen lassen. Dafür brauchten sie enorme Mengen Kalzium und Phosphor. Ihre bloße Existenz war ein Indikator: Nur extrem fruchtbarer Boden konnte ein derart verschwenderisches Tier ernähren. Doch als die Steppe sich in dichten Wald verwandelte, wurde das prächtige Geweih zur Todesfalle. Zwischen Bäumen und Ästen blieben die Hirsche hängen — leichte Beute für Höhlenlöwen. Was sie groß gemacht hatte, brachte sie um.
+</td>
+<td>
+  Megaloceros giganteus — the giant deer — was proof of the steppe's richness. Its antlers spanned 3.6 meters, wider than a small car. Every year, males had to regrow 40 kilograms of antler. This required enormous amounts of calcium and phosphorus. Their mere existence was an indicator: only extremely fertile soil could feed such a wasteful animal. But when the steppe turned into dense forest, those magnificent antlers became a death trap. Between trees and branches, the deer got stuck — easy prey for cave lions. What had made them great, killed them.
+</td>
+</tr>
+
+<!-- KAPITEL 3 -->
+<tr>
+<td>
+  <span class="section-label">Kapitel 3: Der Mörder war grün</span>
+  Es gibt ein weit verbreitetes Missverständnis: Mammuts starben aus, weil es zu warm wurde. Aber Mammuts hatten zuvor mehrere Warmzeiten überlebt. Ihr Killer war nicht die Temperatur. Es war die Feuchtigkeit. Vor etwa 12.000 Jahren begannen die Eisschilde der Nordhalbkugel unkontrolliert zu schmelzen. Das Wasser strömte in die Ozeane, veränderte die Meeresströmungen und drückte gewaltige Mengen Feuchtigkeit in die Atmosphäre. Über der Mammut-Steppe, die immer trocken und sonnig gewesen war, bildeten sich zum ersten Mal schwere Wolken. Es begann zu regnen.
+</td>
+<td>
+  <span class="section-label">Chapter 3: The Killer Was Green</span>
+  There is a widespread misconception: mammoths died out because it got too warm. But mammoths had survived multiple warm periods before. Their killer was not the temperature. It was moisture. About 12,000 years ago, the ice sheets of the northern hemisphere began melting uncontrollably. The water poured into the oceans, altered ocean currents, and pushed massive amounts of moisture into the atmosphere. Over the mammoth steppe, which had always been dry and sunny, heavy clouds formed for the first time. It began to rain.
+</td>
+</tr>
+
+<tr>
+<td>
+  Und noch schlimmer: Der Schnee wurde tiefer. Für ein Mammut waren 20 Zentimeter Schnee ein Spielplatz. Aber 2 Meter nasser, schwerer Schnee waren ein Todesurteil. Die Energie, die sie zum Durchkämpfen des Schnees brauchten, überstieg die Energie, die das Gras darunter lieferte. Die Riesen begannen zu verhungern. Gleichzeitig marschierte eine neue Armee aus dem Süden: Bäume. Sträucher, Moose und die sibirische Taiga drangen in die Steppe ein. Gras braucht direktes Sonnenlicht und trockenen Boden. Bäume blockierten das Licht und veränderten die Bodenchemie. Wo einmal goldenes Gras stand, wuchs jetzt dunkler Nadelwald. Die nördlichen Sträucher enthielten mehr Giftstoffe als Gras. Für Bisons und Pferde lieferten sie zu wenig Nährstoffe — und konnten sie sogar vergiften.
+</td>
+<td>
+  And worse still: the snow got deeper. For a mammoth, 20 centimeters of snow was a playground. But 2 meters of wet, heavy snow was a death sentence. The energy they needed to fight through the snow exceeded the energy the grass beneath could provide. The giants began to starve. At the same time, a new army marched from the south: trees. Shrubs, mosses, and the Siberian taiga invaded the steppe. Grass needs direct sunlight and dry soil. Trees blocked the light and altered the soil chemistry. Where golden grass once stood, dark coniferous forest now grew. The northern shrubs contained more toxins than grass. For bison and horses, they provided too few nutrients — and could even poison them.
+</td>
+</tr>
+
+<tr>
+<td>
+  Als das Gras verschwand, fielen die Dominosteine. Pferde und Bisons verhungerten oder zogen sich in winzige Restgebiete zurück — dort machten Menschen und Höhlenlöwen leichtes Spiel mit ihnen. Mammuts und Nashörner wurden in kleine, isolierte Populationen auf Inseln und in abgelegenen Tälern gedrängt. Inzucht schwächte ihre Linien. Als die Beute verschwand, verschwanden auch die Raubtiere. Höhlenlöwen und Säbelzahnkatzen waren zu groß, um im dichten Wald von kleinerer Beute zu leben. Es war kein plötzlicher Tod. Es war ein Prozess über Jahrtausende, bei dem jeder Quadratmeter Steppe vom grünen Wald verschlungen wurde. Das letzte Wollmammut starb auf der Wrangel-Insel vor etwa 4.000 Jahren. Zur gleichen Zeit bauten die Ägypter an ihren Pyramiden. Es starb nicht an Wassermangel. Es starb, weil sein Reich zu einem Wald geworden war, in dem es nicht mehr existieren konnte.
+</td>
+<td>
+  When the grass vanished, the dominoes fell. Horses and bison starved or retreated to tiny remnant areas — where humans and cave lions made short work of them. Mammoths and rhinos were pushed into small, isolated populations on islands and in remote valleys. Inbreeding weakened their lineages. When the prey disappeared, so did the predators. Cave lions and saber-toothed cats were too large to survive on smaller prey in the dense forest. It was not a sudden death. It was a process spanning millennia, where every square meter of steppe was devoured by green forest. The last woolly mammoth died on Wrangel Island about 4,000 years ago. At the same time, the Egyptians were building their pyramids. It did not die from lack of water. It died because its empire had become a forest where it could no longer exist.
+</td>
+</tr>
+
+<!-- FAZIT -->
+<tr>
+<td>
+  <span class="section-label">Fazit</span>
+  Die Mammut-Steppe war kein passives Ökosystem, das vom Klima abhängig war. Sie war eine Maschine, angetrieben von den Füßen ihrer eigenen Bewohner. Als die Feuchtigkeit stieg und der Wald kam, fehlten ihr die Ingenieure, die sie hätten verteidigen können — weil genau diese Feuchtigkeit die Ingenieure zuerst tötete. Heute liegt das Erbe der Steppe tief im sibirischen Permafrost, wo gelegentlich eine perfekt erhaltene Mammut-Mumie auftaucht. Eine Nachricht aus einer Welt, die nicht durch Stärke fiel. Sondern durch Regen.
+</td>
+<td>
+  <span class="section-label">Conclusion</span>
+  The mammoth steppe was not a passive ecosystem dependent on climate. It was a machine, powered by the feet of its own inhabitants. When moisture rose and the forest came, it lacked the engineers who could have defended it — because that very moisture killed the engineers first. Today, the steppe's legacy lies deep in the Siberian permafrost, where occasionally a perfectly preserved mammoth mummy surfaces. A message from a world that did not fall through strength. But through rain.
+</td>
+</tr>
+
+</tbody>
+</table>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 2: VO-SCRIPT 11LABS                                   -->
+<!-- ============================================================ -->
+
+<div class="section-header">Section 2: VO-Script 11Labs</div>
+
+<h2>VO-Script — Deutsche Sprachaufnahme mit Mood-Tags</h2>
+
+<div class="vo-block">
+  <span class="vo-tag">[dramatic]</span>
+  <span class="vo-text">Vor 20.000 Jahren lag dort, wo heute London steht, kein Wald und kein Eis — sondern ein goldenes Meer aus trockenem Gras, breiter als ganz Europa.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[awestruck]</span>
+  <span class="vo-text">Das größte Ökosystem der Erdgeschichte.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[ominous]</span>
+  <span class="vo-text">Und es wurde nicht durch einen Asteroiden zerstört. Sondern durch Regen.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[calm expert]</span>
+  <span class="vo-text">Die meisten Menschen stellen sich die Eiszeit als lebensfeindliche Schneewüste vor. Das Gegenteil war der Fall. Die Mammut-Steppe erstreckte sich von Spanien über Sibirien bis nach Kanada — ein durchgehender Streifen Land, größer als alle heutigen Kontinente zusammen.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[building tension]</span>
+  <span class="vo-text">Die Dichte an großen Pflanzenfressern übertraf die heutige Serengeti. Mammuts, Wollnashörner, Riesenhirsche, Steppenbisons — Dutzende Tonnen Biomasse pro Quadratkilometer.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[matter-of-fact]</span>
+  <span class="vo-text">Dieses System existierte über 100.000 Jahre.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[foreboding]</span>
+  <span class="vo-text">Doch dann verschwand es innerhalb weniger Jahrtausende. Nicht wegen der Kälte, nicht wegen der Jäger. Wegen der Feuchtigkeit.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[explaining]</span>
+  <span class="vo-text">Während der letzten Eiszeit lag der Meeresspiegel 120 Meter tiefer als heute — so tief, dass die Nordsee und die Beringstraße trockenes Grasland waren. Das Ergebnis war ein ökologischer Superkontinent, der sich ununterbrochen von der Iberischen Halbinsel bis nach Alaska erstreckte.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[scientific]</span>
+  <span class="vo-text">Der Grund für diesen Reichtum war ein klimatisches Paradox: Trockenheit. Die riesigen Eisschilde über Nordamerika und Nordeuropa entzogen der Atmosphäre so viel Feuchtigkeit, dass kaum Wolken entstanden. Ohne Regen wuchsen keine Wälder. Ohne dicken Schnee blieben Tiere mobil. Der Schnee war so dünn, dass Pflanzenfresser ihn mit den Hufen beiseite schieben konnten.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[curious]</span>
+  <span class="vo-text">Aber es war kein gewöhnliches Gras. Durch das kalte, trockene Klima trocknete es stehend auf seinen Wurzeln — wie natürliches Heu, das den ganzen Winter über seine Nährstoffe behielt.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[surprised]</span>
+  <span class="vo-text">Analysen aus den Mägen von Mammut-Mumien zeigen: Dieses Gras enthielt so viel Protein und Kohlenhydrate wie hochwertiges Getreide.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[calm expert]</span>
+  <span class="vo-text">Die Mammut-Steppe war eine Fabrik, die sich selbst am Laufen hielt. Starker Wind verhinderte Schneeanhäufungen. Sonnenlicht trieb die Photosynthese an. Und die Füße von Millionen Tieren verdichteten den Boden. Unter dem Boden lag Permafrost — eine gefrorene Schicht, die im kurzen Sommer gerade genug Feuchtigkeit freigab, damit Gras wachsen konnte, aber nicht genug für Sümpfe oder Wälder. Eine fragile Balance.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[intense]</span>
+  <span class="vo-text">Hier liegt das entscheidende Detail: Lockerer Schnee isoliert den Boden. Eine Meter dicke Schneedecke hält die Erde 15 bis 20 Grad wärmer als die Luft darüber — so warm wie ein beheiztes Zimmer im Vergleich zur Außentemperatur.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[tense]</span>
+  <span class="vo-text">Ohne Tiere wäre der Permafrost unter dieser Isolierung aufgetaut und hätte Methan freigesetzt.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[matter-of-fact]</span>
+  <span class="vo-text">Doch Millionen Bisons und Pferde trampelten den Schnee flach. Komprimierter Schnee verliert seine Isolationswirkung. Die arktische Kälte von minus 50 Grad drang bis tief in den Boden. Das hielt den Permafrost stabil. Die Tiere schützten buchstäblich das Fundament ihres eigenen Reichs.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[scientific]</span>
+  <span class="vo-text">Mammuthus primigenius war nicht einfach ein Elefant, der in die Kälte geraten ist. Diese Art ist das Ergebnis von 5 Millionen Jahren genetischer Feinabstimmung. Ihre Ohren waren nur ein Fünfzehntel so groß wie die eines Afrikanischen Elefanten — winzige Wärmesparfenster.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[explaining]</span>
+  <span class="vo-text">Ein spezielles Protein namens TRPV3 reduzierte die Kälteempfindlichkeit der Haut und förderte dichtes Fellwachstum. Ihr Hämoglobin trug eine Mutation, die Sauerstoff selbst bei Temperaturen nahe dem Gefrierpunkt an das Gewebe abgab. Ohne diese Mutation wären ihre Beine beim stundenlangen Stehen im Schnee abgestorben.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[dramatic]</span>
+  <span class="vo-text">Ihre Stoßzähne — bis zu 4 Meter lang, spiralförmig gebogen — waren die Bulldozer der Eiszeit. Abnutzungsspuren auf Fossilien zeigen: Mammuts schoben sie nicht geradeaus, sondern führten seitliche Schwenkbewegungen aus, um die Eiskruste aufzubrechen.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[urgent]</span>
+  <span class="vo-text">Das war nicht nur für sie selbst überlebenswichtig. Wenn diese Kruste intakt blieb, verhungerten kleinere Arten wie Pferde und Bisons nach einem einzigen Eissturm.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[curious]</span>
+  <span class="vo-text">Das Wollnashorn übernahm die gleiche Aufgabe in windgeschützten Tälern, wo sich Schnee dick auftürmte. Sein Horn war nicht aus Knochen, sondern aus Keratin — und seltsam flach. Eine spezialisierte Schneeschaufel.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[explaining]</span>
+  <span class="vo-text">Mummifizierte Exemplare aus einer polnischen Wachsmine zeigen einen massiven Fetthöcker auf den Schultern. Kein bloßer Energiespeicher, sondern ein Gegengewicht, das beim stundenlangen Schneeschaufeln mit dem Horn zusätzliche Kraft gab.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[awestruck]</span>
+  <span class="vo-text">Megaloceros giganteus — der Riesenhirsch — war der Beweis für den Reichtum der Steppe. Sein Geweih spannte 3,6 Meter, breiter als ein Kleinwagen. Jedes Jahr mussten die Männchen 40 Kilogramm Geweih nachwachsen lassen.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[matter-of-fact]</span>
+  <span class="vo-text">Dafür brauchten sie enorme Mengen Kalzium und Phosphor. Ihre bloße Existenz war ein Indikator: Nur extrem fruchtbarer Boden konnte ein derart verschwenderisches Tier ernähren.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[grim]</span>
+  <span class="vo-text">Doch als die Steppe sich in dichten Wald verwandelte, wurde das prächtige Geweih zur Todesfalle. Zwischen Bäumen und Ästen blieben die Hirsche hängen — leichte Beute für Höhlenlöwen. Was sie groß gemacht hatte, brachte sie um.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[slow deliberate]</span>
+  <span class="vo-text">Es gibt ein weit verbreitetes Missverständnis: Mammuts starben aus, weil es zu warm wurde.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[matter-of-fact]</span>
+  <span class="vo-text">Aber Mammuts hatten zuvor mehrere Warmzeiten überlebt. Ihr Killer war nicht die Temperatur. Es war die Feuchtigkeit.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[building tension]</span>
+  <span class="vo-text">Vor etwa 12.000 Jahren begannen die Eisschilde der Nordhalbkugel unkontrolliert zu schmelzen. Das Wasser strömte in die Ozeane, veränderte die Meeresströmungen und drückte gewaltige Mengen Feuchtigkeit in die Atmosphäre.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[ominous]</span>
+  <span class="vo-text">Über der Mammut-Steppe, die immer trocken und sonnig gewesen war, bildeten sich zum ersten Mal schwere Wolken. Es begann zu regnen.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[tense]</span>
+  <span class="vo-text">Und noch schlimmer: Der Schnee wurde tiefer. Für ein Mammut waren 20 Zentimeter Schnee ein Spielplatz. Aber 2 Meter nasser, schwerer Schnee waren ein Todesurteil. Die Energie, die sie zum Durchkämpfen des Schnees brauchten, überstieg die Energie, die das Gras darunter lieferte. Die Riesen begannen zu verhungern.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[intense]</span>
+  <span class="vo-text">Gleichzeitig marschierte eine neue Armee aus dem Süden: Bäume. Sträucher, Moose und die sibirische Taiga drangen in die Steppe ein. Gras braucht direktes Sonnenlicht und trockenen Boden. Bäume blockierten das Licht und veränderten die Bodenchemie. Wo einmal goldenes Gras stand, wuchs jetzt dunkler Nadelwald.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[grim]</span>
+  <span class="vo-text">Die nördlichen Sträucher enthielten mehr Giftstoffe als Gras. Für Bisons und Pferde lieferten sie zu wenig Nährstoffe — und konnten sie sogar vergiften.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[building tension]</span>
+  <span class="vo-text">Als das Gras verschwand, fielen die Dominosteine. Pferde und Bisons verhungerten oder zogen sich in winzige Restgebiete zurück — dort machten Menschen und Höhlenlöwen leichtes Spiel mit ihnen.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[slow deliberate]</span>
+  <span class="vo-text">Mammuts und Nashörner wurden in kleine, isolierte Populationen auf Inseln und in abgelegenen Tälern gedrängt. Inzucht schwächte ihre Linien. Als die Beute verschwand, verschwanden auch die Raubtiere. Höhlenlöwen und Säbelzahnkatzen waren zu groß, um im dichten Wald von kleinerer Beute zu leben.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[reflective]</span>
+  <span class="vo-text">Es war kein plötzlicher Tod. Es war ein Prozess über Jahrtausende, bei dem jeder Quadratmeter Steppe vom grünen Wald verschlungen wurde.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[quiet finality]</span>
+  <span class="vo-text">Das letzte Wollmammut starb auf der Wrangel-Insel vor etwa 4.000 Jahren. Zur gleichen Zeit bauten die Ägypter an ihren Pyramiden. Es starb nicht an Wassermangel. Es starb, weil sein Reich zu einem Wald geworden war, in dem es nicht mehr existieren konnte.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[calm expert]</span>
+  <span class="vo-text">Die Mammut-Steppe war kein passives Ökosystem, das vom Klima abhängig war. Sie war eine Maschine, angetrieben von den Füßen ihrer eigenen Bewohner. Als die Feuchtigkeit stieg und der Wald kam, fehlten ihr die Ingenieure, die sie hätten verteidigen können — weil genau diese Feuchtigkeit die Ingenieure zuerst tötete.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[reflective]</span>
+  <span class="vo-text">Heute liegt das Erbe der Steppe tief im sibirischen Permafrost, wo gelegentlich eine perfekt erhaltene Mammut-Mumie auftaucht.</span>
+</div>
+
+<div class="vo-block">
+  <span class="vo-tag">[final statement]</span>
+  <span class="vo-text">Eine Nachricht aus einer Welt, die nicht durch Stärke fiel. Sondern durch Regen.</span>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 3: EDITOR                                             -->
+<!-- ============================================================ -->
+
+<div class="section-header">Section 3: Editor</div>
+
+<h2>Editor — Scene Breakdown (English)</h2>
+
+<div class="editor-box">
+  <span class="scene-num">SCENE 01 — HOOK</span>
+  20,000 years ago, where London stands today, there was no forest and no ice — but a golden sea of dry grass, wider than all of Europe. The largest ecosystem in Earth's history. And it was not destroyed by an asteroid. It was destroyed by rain.
+</div>
+
+<div class="editor-box">
+  <span class="scene-num">SCENE 02 — INTRO</span>
+  Most people imagine the Ice Age as a hostile snow desert. The opposite was true. The mammoth steppe stretched from Spain across Siberia to Canada — one continuous strip of land, larger than all modern continents combined. The density of large herbivores exceeded today's Serengeti. Mammoths, woolly rhinos, giant deer, steppe bison — dozens of tons of biomass per square kilometer. This system existed for over 100,000 years. Then it vanished within a few millennia. Not because of the cold, not because of hunters. Because of moisture.
+</div>
+
+<div class="editor-box">
+  <span class="scene-num">SCENE 03 — CH1: Sea levels and the supercontinent</span>
+  During the last Ice Age, sea levels were 120 meters lower than today — so low that the North Sea and the Bering Strait were dry grassland. The result was an ecological supercontinent stretching uninterrupted from the Iberian Peninsula to Alaska. The reason for this abundance was a climatic paradox: aridity. The massive ice sheets over North America and Northern Europe stripped so much moisture from the atmosphere that clouds barely formed. Without rain, no forests grew. Without thick snow, animals stayed mobile. The snow was so thin that herbivores could push it aside with their hooves.
+</div>
+
+<div class="editor-box">
+  <span class="scene-num">SCENE 04 — CH1: The grass and the self-sustaining factory</span>
+  But this was no ordinary grass. In the cold, dry climate, it dried standing on its roots — like natural hay that retained its nutrients throughout winter. Analyses from the stomachs of mammoth mummies show: this grass contained as much protein and carbohydrates as high-quality grain. The mammoth steppe was a factory that kept itself running. Strong wind prevented snow accumulation. Sunlight powered photosynthesis. And the feet of millions of animals compacted the ground. Below the surface lay permafrost — a frozen layer that released just enough moisture in the brief summer for grass to grow, but not enough for swamps or forests. A fragile balance.
+</div>
+
+<div class="editor-box">
+  <span class="scene-num">SCENE 05 — CH1: Snow insulation and permafrost protection</span>
+  Here is the crucial detail: loose snow insulates the ground. A meter of snow keeps the soil 15 to 20 degrees warmer than the air above — as warm as a heated room compared to the outdoor temperature. Without animals, the permafrost underneath this insulation would have thawed and released methane. But millions of bison and horses trampled the snow flat. Compressed snow loses its insulating effect. Arctic cold of minus 50 degrees penetrated deep into the ground. This kept the permafrost stable. The animals literally protected the foundation of their own empire.
+</div>
+
+<div class="editor-box">
+  <span class="scene-num">SCENE 06 — CH2: Mammoth biology</span>
+  Mammuthus primigenius was not simply an elephant that wandered into the cold. This species is the result of 5 million years of genetic fine-tuning. Their ears were only one-fifteenth the size of an African elephant's — tiny heat-saving windows. A special protein called TRPV3 reduced the skin's sensitivity to cold and promoted dense fur growth. Their hemoglobin carried a mutation that released oxygen to tissues even at temperatures near freezing. Without this mutation, their legs would have died from oxygen deprivation during hours of standing in snow.
+</div>
+
+<div class="editor-box">
+  <span class="scene-num">SCENE 07 — CH2: Tusks, rhino horns, and snow engineering</span>
+  Their tusks — up to 4 meters long, spirally curved — were the bulldozers of the Ice Age. Wear marks on fossils show: mammoths did not push them straight forward but performed lateral sweeping motions to break through the ice crust. This was not just vital for their own survival. If this crust remained intact, smaller species like horses and bison starved after a single ice storm. The woolly rhinoceros took on the same role in wind-sheltered valleys where snow piled up thick. Its horn was not made of bone but of keratin — and strangely flat. A specialized snow shovel. Mummified specimens from a Polish wax mine show a massive fat hump on the shoulders. Not merely an energy reserve, but a counterweight that provided additional force during hours of snow-shoveling with the horn.
+</div>
+
+<div class="editor-box">
+  <span class="scene-num">SCENE 08 — CH2: The giant deer as fertility indicator</span>
+  Megaloceros giganteus — the giant deer — was proof of the steppe's richness. Its antlers spanned 3.6 meters, wider than a small car. Every year, males had to regrow 40 kilograms of antler. This required enormous amounts of calcium and phosphorus. Their mere existence was an indicator: only extremely fertile soil could feed such a wasteful animal. But when the steppe turned into dense forest, those magnificent antlers became a death trap. Between trees and branches, the deer got stuck — easy prey for cave lions. What had made them great, killed them.
+</div>
+
+<div class="editor-box">
+  <span class="scene-num">SCENE 09 — CH3: The real killer — moisture</span>
+  There is a widespread misconception: mammoths died out because it got too warm. But mammoths had survived multiple warm periods before. Their killer was not the temperature. It was moisture. About 12,000 years ago, the ice sheets of the northern hemisphere began melting uncontrollably. The water poured into the oceans, altered ocean currents, and pushed massive amounts of moisture into the atmosphere. Over the mammoth steppe, which had always been dry and sunny, heavy clouds formed for the first time. It began to rain.
+</div>
+
+<div class="editor-box">
+  <span class="scene-num">SCENE 10 — CH3: Deep snow and the invasion of trees</span>
+  And worse still: the snow got deeper. For a mammoth, 20 centimeters of snow was a playground. But 2 meters of wet, heavy snow was a death sentence. The energy they needed to fight through the snow exceeded the energy the grass beneath could provide. The giants began to starve. At the same time, a new army marched from the south: trees. Shrubs, mosses, and the Siberian taiga invaded the steppe. Grass needs direct sunlight and dry soil. Trees blocked the light and altered the soil chemistry. Where golden grass once stood, dark coniferous forest now grew. The northern shrubs contained more toxins than grass. For bison and horses, they provided too few nutrients — and could even poison them.
+</div>
+
+<div class="editor-box">
+  <span class="scene-num">SCENE 11 — CH3: The domino collapse</span>
+  When the grass vanished, the dominoes fell. Horses and bison starved or retreated to tiny remnant areas — where humans and cave lions made short work of them. Mammoths and rhinos were pushed into small, isolated populations on islands and in remote valleys. Inbreeding weakened their lineages. When the prey disappeared, so did the predators. Cave lions and saber-toothed cats were too large to survive on smaller prey in the dense forest. It was not a sudden death. It was a process spanning millennia, where every square meter of steppe was devoured by green forest. The last woolly mammoth died on Wrangel Island about 4,000 years ago. At the same time, the Egyptians were building their pyramids. It did not die from lack of water. It died because its empire had become a forest where it could no longer exist.
+</div>
+
+<div class="editor-box">
+  <span class="scene-num">SCENE 12 — CONCLUSION</span>
+  The mammoth steppe was not a passive ecosystem dependent on climate. It was a machine, powered by the feet of its own inhabitants. When moisture rose and the forest came, it lacked the engineers who could have defended it — because that very moisture killed the engineers first. Today, the steppe's legacy lies deep in the Siberian permafrost, where occasionally a perfectly preserved mammoth mummy surfaces. A message from a world that did not fall through strength. But through rain.
+</div>
+
+</body>
+</html>

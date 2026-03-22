@@ -1,0 +1,6 @@
+.DS_Store
+*.vtt
+transcript_clean.txt
+video_candidates.txt
+transcripts/
+.venv/
