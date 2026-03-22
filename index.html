@@ -1845,7 +1845,7 @@ body {
         </div>
 
         <!-- 3-Tab Script View -->
-        <div class="script-tabs" id="scriptTabBar">
+        <div class="script-tabs" id="scriptTabBar" style="display:none;">
           <button class="script-tab active" data-stab="translation" onclick="switchScriptTab('translation')">Translation</button>
           <button class="script-tab" data-stab="vo-script" onclick="switchScriptTab('vo-script')">VO-Script</button>
           <button class="script-tab" data-stab="editor" onclick="switchScriptTab('editor')">Editor (EN)</button>
@@ -3135,7 +3135,10 @@ function getCachedScript(topic) {
   try {
     const cache = JSON.parse(localStorage.getItem(STORAGE_KEYS.SCRIPT_CACHE) || '{}');
     const key = getScriptCacheKey(topic);
-    return cache[key] || null;
+    const entry = cache[key] || null;
+    // Skip old cache entries that don't have the pipeline format
+    if (entry && !entry.isPipeline && !entry.script) return null;
+    return entry;
   } catch (_) {
     return null;
   }
@@ -4085,6 +4088,9 @@ function openScriptModal(ideaIndex) {
   document.getElementById('scriptLoading').style.display = 'none';
   document.getElementById('scriptResult').style.display = 'none';
   document.getElementById('scriptError').style.display = 'none';
+  document.getElementById('productionHeader').style.display = 'none';
+  document.getElementById('scriptTabBar').style.display = 'none';
+  document.getElementById('scriptLegacyView').style.display = 'none';
   document.getElementById('btnExport').style.display = 'none';
   document.getElementById('btnRegenerate').style.display = 'none';
   document.getElementById('btnFromScratch').style.display = 'none';
