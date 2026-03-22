@@ -910,6 +910,17 @@ body {
   border-color: rgba(52, 211, 153, 0.5);
 }
 
+.btn-export {
+  background: var(--discovery-dim);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: var(--discovery);
+}
+
+.btn-export:hover {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.5);
+}
+
 .btn-idea {
   background: var(--idea-dim);
   border-color: rgba(167, 139, 250, 0.3);
@@ -1904,6 +1915,7 @@ body {
     </div>
     <div class="script-actions" id="scriptActions">
       <button class="btn" onclick="closeScriptModal()">Schließen</button>
+      <button class="btn btn-export" id="btnExport" onclick="exportProductionDocument()" style="display:none;">Exportieren</button>
       <button class="btn btn-tts" id="btnTTS" onclick="generateTTS()" style="display:none;">Vertonen</button>
       <button class="btn btn-idea" id="btnRegenerate" onclick="regenerateScript()" style="display:none;">Neu generieren</button>
       <button class="btn btn-idea" id="btnFromScratch" onclick="generateFromScratch()" style="display:none;">Von Grund auf</button>
@@ -2821,6 +2833,7 @@ function renderPipelineResult(record) {
   // Show action buttons
   const btnTTS = document.getElementById('btnTTS');
   btnTTS.style.display = getElevenLabsKey() ? 'inline-flex' : 'none';
+  document.getElementById('btnExport').style.display = record.isPipeline ? 'inline-flex' : 'none';
   document.getElementById('btnRegenerate').style.display = 'inline-flex';
   document.getElementById('btnFromScratch').style.display = 'inline-flex';
 
@@ -2903,6 +2916,212 @@ function copyEditorText() {
   }).catch(() => {
     showToast('Kopieren fehlgeschlagen', 'error');
   });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   EXPORT — builds production document matching reference PDF format
+   ═══════════════════════════════════════════════════════════════ */
+function exportProductionDocument() {
+  const idea = appState.currentIdea;
+  const cached = idea ? getCachedScript(idea.topic) : null;
+  if (!cached || !cached.isPipeline) {
+    showToast('Kein Pipeline-Ergebnis zum Exportieren vorhanden', 'warn');
+    return;
+  }
+
+  const bestVideo = idea ? pickBestSourceVideo(idea) : null;
+  const sourceUrl = bestVideo ? bestVideo.url : '';
+  const sourceTitle = bestVideo ? bestVideo.title : idea.topic;
+
+  // Pick first title suggestion as main title
+  const titleLines = (cached.titles || '')
+    .split('\n')
+    .map(l => l.replace(/^\d+\.\s*/, '').trim())
+    .filter(l => l.length > 0);
+  const mainTitle = titleLines[0] || idea.topic;
+
+  // Build translation table rows
+  const pairs = cached.translationPairs || [];
+  const tableRows = pairs.map(p => `
+    <tr>
+      <td>${escapeHtml(p.de)}</td>
+      <td>${escapeHtml(p.en)}</td>
+    </tr>`).join('');
+
+  // Build VO-Script with mood tags
+  const voText = (cached.voScript || cached.script || '')
+    .split('\n')
+    .map(line => escapeHtml(line))
+    .join('<br>');
+
+  // Build Editor boxes (English paragraphs)
+  const editorParagraphs = (cached.editorTextEN || cached.script || '')
+    .split(/\n\n+/)
+    .map(p => p.trim())
+    .filter(p => p.length > 0);
+
+  const editorBoxes = editorParagraphs
+    .map(p => `<div class="editor-box">${escapeHtml(p)}</div>`)
+    .join('');
+
+  // Number for filename
+  const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+
+  const html = `<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>${escapeHtml(mainTitle)}</title>
+<style>
+  @page { margin: 2cm; size: A4; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #fff;
+  }
+
+  /* Section headers */
+  .section-title {
+    font-size: 18pt;
+    font-weight: 700;
+    margin-bottom: 24pt;
+    page-break-before: always;
+  }
+  .section-title:first-of-type {
+    page-break-before: avoid;
+  }
+
+  /* Production header */
+  .prod-header {
+    margin-bottom: 20pt;
+    font-size: 10pt;
+    color: #444;
+  }
+  .prod-header a {
+    color: #1a73e8;
+    text-decoration: none;
+  }
+  .prod-header-label {
+    font-size: 9pt;
+    color: #888;
+    margin-bottom: 2pt;
+  }
+  .prod-title {
+    font-size: 13pt;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-top: 8pt;
+    margin-bottom: 16pt;
+  }
+
+  /* Translation table */
+  .trans-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16pt;
+    font-size: 10.5pt;
+  }
+  .trans-table td {
+    padding: 10pt 12pt;
+    vertical-align: top;
+    border: 1px solid #ddd;
+    width: 50%;
+    line-height: 1.55;
+  }
+  .trans-table td:first-child {
+    border-right: 2px solid #bbb;
+  }
+
+  /* VO-Script */
+  .vo-block {
+    font-size: 10.5pt;
+    line-height: 1.7;
+    margin-bottom: 8pt;
+  }
+  .mood-tag {
+    color: #7c3aed;
+    font-weight: 600;
+    font-size: 9.5pt;
+  }
+
+  /* Editor boxes */
+  .editor-box {
+    border: 1px solid #ccc;
+    padding: 10pt 14pt;
+    margin-bottom: 10pt;
+    font-size: 10.5pt;
+    line-height: 1.6;
+    page-break-inside: avoid;
+  }
+
+  /* Separator line */
+  .separator {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 12pt 0;
+  }
+
+  @media print {
+    .section-title { page-break-before: always; }
+    .section-title:first-of-type { page-break-before: avoid; }
+    .editor-box { page-break-inside: avoid; }
+    .no-print { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════ SECTION 1: Translation ═══════ -->
+<div class="section-title">Translation</div>
+
+<div class="prod-header">
+  <div class="prod-header-label">Remodeling Video:</div>
+  <div><a href="${escapeHtml(sourceUrl)}">${escapeHtml(sourceUrl)}</a></div>
+  <div class="prod-title">Titel: ${escapeHtml(mainTitle)}</div>
+</div>
+
+<table class="trans-table">
+${tableRows}
+</table>
+
+<!-- ═══════ SECTION 2: VO-Script 11Labs ═══════ -->
+<div class="section-title">VO-Script 11Labs</div>
+
+<div class="vo-block">
+${voText}
+</div>
+
+<!-- ═══════ SECTION 3: Editor (EN) ═══════ -->
+<div class="section-title">Editor</div>
+
+${editorBoxes}
+
+</body>
+</html>`;
+
+  // Open in new tab for print/save
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const win = window.open(url, '_blank');
+
+  if (win) {
+    showToast('Export geöffnet — Ctrl+P zum Speichern als PDF', 'success');
+  } else {
+    // Fallback: download as HTML
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${dateStr}_${mainTitle.replace(/[^a-zA-Z0-9äöüÄÖÜß\s-]/g, '').replace(/\s+/g, '-').slice(0, 60)}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast('HTML-Datei heruntergeladen', 'success');
+  }
+
+  // Clean up blob URL after delay
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -3866,6 +4085,7 @@ function openScriptModal(ideaIndex) {
   document.getElementById('scriptLoading').style.display = 'none';
   document.getElementById('scriptResult').style.display = 'none';
   document.getElementById('scriptError').style.display = 'none';
+  document.getElementById('btnExport').style.display = 'none';
   document.getElementById('btnRegenerate').style.display = 'none';
   document.getElementById('btnFromScratch').style.display = 'none';
   document.getElementById('btnTTS').style.display = 'none';
@@ -3958,6 +4178,7 @@ function regenerateScript() {
   document.getElementById('scriptResult').style.display = 'none';
   document.getElementById('pipelineProgressSection').style.display = 'none';
   document.getElementById('scriptError').style.display = 'none';
+  document.getElementById('btnExport').style.display = 'none';
   document.getElementById('btnRegenerate').style.display = 'none';
   document.getElementById('btnFromScratch').style.display = 'none';
   document.getElementById('btnTTS').style.display = 'none';
