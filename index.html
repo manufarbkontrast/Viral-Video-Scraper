@@ -1465,6 +1465,111 @@ body {
   border-color: var(--idea);
   box-shadow: 0 0 0 2px var(--idea-dim);
 }
+
+/* Production Header (Remodeling Video + Titel) */
+.production-header {
+  background: var(--shelf);
+  border: 1px solid var(--trench);
+  border-radius: var(--radius);
+  padding: calc(var(--unit) * 2);
+  margin-bottom: calc(var(--unit) * 2);
+}
+
+.production-header-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fossil);
+  margin-bottom: calc(var(--unit) * 0.5);
+}
+
+.production-header-value {
+  font-size: 0.85rem;
+  color: var(--bone);
+  word-break: break-all;
+}
+
+.production-header-value a {
+  color: var(--signal);
+  text-decoration: none;
+}
+
+.production-header-value a:hover {
+  text-decoration: underline;
+}
+
+.production-header-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--bone);
+  margin-top: calc(var(--unit) * 1.5);
+}
+
+.production-titles-list {
+  margin-top: calc(var(--unit) * 1);
+  padding: 0;
+  list-style: none;
+  counter-reset: titel;
+}
+
+.production-titles-list li {
+  counter-increment: titel;
+  padding: calc(var(--unit) * 0.8) 0;
+  border-bottom: 1px solid var(--reef);
+  font-size: 0.85rem;
+  color: var(--sediment);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.production-titles-list li:hover {
+  color: var(--bone);
+}
+
+.production-titles-list li::before {
+  content: counter(titel) ".";
+  color: var(--idea);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  margin-right: calc(var(--unit) * 1);
+  font-size: 0.8rem;
+}
+
+.production-titles-list li:last-child {
+  border-bottom: none;
+}
+
+/* Editor Boxes (paragraph blocks like Tab 3 in reference PDFs) */
+.editor-boxes {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--unit) * 1.5);
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.editor-box {
+  background: var(--abyss);
+  border: 1px solid var(--reef);
+  border-radius: var(--radius);
+  padding: calc(var(--unit) * 2);
+  font-size: 0.82rem;
+  color: var(--bone);
+  line-height: 1.7;
+}
+
+.editor-box:hover {
+  border-color: var(--trench);
+}
+
+/* Translation table alternating rows */
+.translation-table tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.translation-table tr:hover td {
+  background: var(--shelf);
+}
 </style>
 </head>
 <body>
@@ -1720,6 +1825,14 @@ body {
           <div class="script-content" id="scriptTitles"></div>
         </div>
 
+        <!-- Production Header (Remodeling Video + Titel) -->
+        <div class="production-header" id="productionHeader" style="display:none;">
+          <div class="production-header-label">Remodeling Video</div>
+          <div class="production-header-value" id="productionSourceUrl"></div>
+          <div class="production-header-label" style="margin-top:calc(var(--unit) * 1.5);">Titel-Vorschläge</div>
+          <ol class="production-titles-list" id="productionTitlesList"></ol>
+        </div>
+
         <!-- 3-Tab Script View -->
         <div class="script-tabs" id="scriptTabBar">
           <button class="script-tab active" data-stab="translation" onclick="switchScriptTab('translation')">Translation</button>
@@ -1732,14 +1845,14 @@ body {
             <span class="script-section-label">DE / EN Absatz-Tabelle</span>
             <button class="script-copy-btn" onclick="copyTranslationTable()">Tabelle kopieren</button>
           </div>
-          <div style="overflow-x:auto;border:1px solid var(--reef);border-radius:var(--radius);">
+          <div style="overflow-x:auto;border:1px solid var(--trench);border-radius:var(--radius);">
             <table class="translation-table" id="translationTableBody"></table>
           </div>
         </div>
 
         <div class="script-tab-content" id="stabVoScript">
           <div class="script-section-header" style="margin-bottom:calc(var(--unit) * 1.5);">
-            <span class="script-section-label">VO-Script mit Mood-Tags</span>
+            <span class="script-section-label">VO-Script mit Mood-Tags (Deutsch)</span>
             <button class="script-copy-btn" onclick="copySection('voScriptText')">Kopieren</button>
           </div>
           <div class="vo-script-content" id="voScriptText"></div>
@@ -1747,10 +1860,10 @@ body {
 
         <div class="script-tab-content" id="stabEditor">
           <div class="script-section-header" style="margin-bottom:calc(var(--unit) * 1.5);">
-            <span class="script-section-label">Editor (reiner Text)</span>
+            <span class="script-section-label">Editor — English Script</span>
             <button class="script-copy-btn" onclick="copyEditorText()">Kopieren</button>
           </div>
-          <textarea class="editor-content" id="editorText"></textarea>
+          <div class="editor-boxes" id="editorBoxes"></div>
         </div>
 
         <!-- Legacy single-view fallback (for from-scratch scripts) -->
@@ -2638,9 +2751,6 @@ function renderPipelineResult(record) {
   const result = document.getElementById('scriptResult');
   result.style.display = 'block';
 
-  // Titles
-  document.getElementById('scriptTitles').textContent = record.titles;
-
   // Word count
   const wc = record.wordCount || 0;
   const estMinutes = Math.round(wc / 130);
@@ -2648,6 +2758,38 @@ function renderPipelineResult(record) {
     `${wc.toLocaleString('de-DE')} Wörter ~ ${estMinutes} Min.`;
 
   if (record.isPipeline) {
+    // Production Header — Remodeling Video URL + Titel
+    const headerEl = document.getElementById('productionHeader');
+    headerEl.style.display = 'block';
+
+    // Source video URL
+    const idea = appState.currentIdea;
+    const bestVideo = idea ? pickBestSourceVideo(idea) : null;
+    const sourceUrlEl = document.getElementById('productionSourceUrl');
+    if (bestVideo) {
+      sourceUrlEl.innerHTML = `<a href="${escapeHtml(bestVideo.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(bestVideo.url)}</a>`;
+    } else {
+      sourceUrlEl.textContent = record.topic || '—';
+    }
+
+    // Titel-Vorschläge as numbered list
+    const titlesList = document.getElementById('productionTitlesList');
+    const titlesText = record.titles || '';
+    const titleLines = titlesText.split('\n')
+      .map(l => l.replace(/^\d+\.\s*/, '').trim())
+      .filter(l => l.length > 0);
+
+    if (titleLines.length > 0) {
+      titlesList.innerHTML = titleLines
+        .map(t => `<li onclick="navigator.clipboard.writeText('${escapeHtml(t)}');showToast('Titel kopiert','success');">${escapeHtml(t)}</li>`)
+        .join('');
+    } else {
+      titlesList.innerHTML = '<li style="color:var(--fossil);">Keine Titel generiert</li>';
+    }
+
+    // Hide old titles element
+    document.getElementById('scriptTitles').textContent = '';
+
     // Show 3-tab view, hide legacy
     document.getElementById('scriptTabBar').style.display = 'flex';
     document.getElementById('scriptLegacyView').style.display = 'none';
@@ -2659,13 +2801,15 @@ function renderPipelineResult(record) {
     const voEl = document.getElementById('voScriptText');
     voEl.innerHTML = formatVoScriptWithMoodTags(record.voScript || record.script);
 
-    // Editor (English text for the video editor)
-    document.getElementById('editorText').value = record.editorTextEN || record.script;
+    // Editor — English text in boxed paragraphs
+    renderEditorBoxes(record.editorTextEN || record.script);
 
-    // Default to VO-Script tab
-    switchScriptTab('vo-script');
+    // Default to Translation tab (like the reference PDFs)
+    switchScriptTab('translation');
   } else {
     // Legacy single-view
+    document.getElementById('productionHeader').style.display = 'none';
+    document.getElementById('scriptTitles').textContent = record.titles || '';
     document.getElementById('scriptTabBar').style.display = 'none';
     document.getElementById('scriptLegacyView').style.display = 'block';
     document.getElementById('stabTranslation').classList.remove('active');
@@ -2702,6 +2846,23 @@ function renderTranslationTable(pairs) {
   table.innerHTML = headerRow + rows;
 }
 
+function renderEditorBoxes(text) {
+  const container = document.getElementById('editorBoxes');
+  const paragraphs = text
+    .split(/\n\n+/)
+    .map(p => p.trim())
+    .filter(p => p.length > 0);
+
+  if (paragraphs.length === 0) {
+    container.innerHTML = '<div class="editor-box" style="color:var(--fossil);">Kein Text verfügbar</div>';
+    return;
+  }
+
+  container.innerHTML = paragraphs
+    .map(p => `<div class="editor-box">${escapeHtml(p)}</div>`)
+    .join('');
+}
+
 function formatVoScriptWithMoodTags(text) {
   // Highlight mood tags with special styling
   const escaped = escapeHtml(text);
@@ -2734,10 +2895,10 @@ function copyTranslationTable() {
 }
 
 function copyEditorText() {
-  const el = document.getElementById('editorText');
-  if (!el) return;
+  const boxes = document.querySelectorAll('#editorBoxes .editor-box');
+  const text = Array.from(boxes).map(b => b.textContent).join('\n\n');
 
-  navigator.clipboard.writeText(el.value).then(() => {
+  navigator.clipboard.writeText(text).then(() => {
     showToast('In Zwischenablage kopiert', 'success');
   }).catch(() => {
     showToast('Kopieren fehlgeschlagen', 'error');
