@@ -568,6 +568,21 @@ body {
   margin-top: 6px;
 }
 
+.viral-link {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--fossil);
+  margin-top: 4px;
+  word-break: break-all;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+.viral-card:hover .viral-link {
+  opacity: 1;
+  color: var(--signal);
+}
+
 /* ═══════════════════════════════════════════════════════════════
    IDEAS PANEL
    ═══════════════════════════════════════════════════════════════ */
@@ -4054,6 +4069,7 @@ function renderViralFeed() {
           </div>
         </div>
         <div class="viral-date">${formatDate(v.publishedAt)}</div>
+        <div class="viral-link">${escapeHtml(v.url)}</div>
       </div>
     </a>`;
   }).join('');
