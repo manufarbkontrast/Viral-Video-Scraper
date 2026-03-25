@@ -1415,8 +1415,8 @@ body {
     </div>
     <div class="form-group">
       <label class="form-label" for="styleInput">Skript-Stil</label>
-      <textarea class="form-input" id="styleInput" rows="3" style="resize:vertical;font-family:var(--font-sans);" placeholder="Beschreibe deinen Stil..."></textarea>
-      <div class="form-hint">Beschreibung des gewünschten Stils für generierte Skripte.</div>
+      <textarea class="form-input" id="styleInput" rows="3" style="resize:vertical;font-family:var(--font-sans);" placeholder="Optional: Zusätzliche Stil-Hinweise (Kanal-Stil ist bereits eingebaut)..."></textarea>
+      <div class="form-hint">Der Kern-Stil (Du-Form, provokant, Extinct Zoo / Eclesso) ist fest eingebaut. Hier kannst du Ergänzungen hinzufügen.</div>
     </div>
     <div class="form-group">
       <label class="form-label" for="elevenlabsKeyInput">ElevenLabs API Key</label>
@@ -1702,8 +1702,7 @@ function getAnthropicKey() {
 }
 
 function getStylePrompt() {
-  return localStorage.getItem(STORAGE_KEYS.STYLE_PROMPT) ||
-    'Deutscher Wildlife-Dokumentar-Erzähler. Informativ, dramatisch, zugänglich. Ähnlich wie Terra X oder BBC Earth. Spreche das Publikum direkt an, nutze bildhafte Sprache und baue Spannung auf. Das Skript wird in ElevenLabs vertont — schreibe so, wie ein professioneller Sprecher es lesen würde.';
+  return localStorage.getItem(STORAGE_KEYS.STYLE_PROMPT) || '';
 }
 
 function getElevenLabsKey() {
@@ -1831,38 +1830,78 @@ async function claudeGenerate(systemPrompt, userPrompt) {
 async function generateScript(idea) {
   const style = getStylePrompt();
 
-  const systemPrompt = `Du bist ein erfahrener Skript-Autor für Wildlife-Dokumentationen auf YouTube.
-Dein Stil: ${style}
+  const systemPrompt = `Du bist Skript-Autor für einen deutschsprachigen Wildlife/Natur-YouTube-Kanal.
 
-LÄNGE: Ziel sind 2.000 Wörter reiner Sprechtext (ca. 12-15 Minuten).
+STIL-REGELN (STRIKT EINHALTEN):
+- Du-Form, locker, gebildet, seriös-informativ
+- Provokant und meinungsstark, leichtfüßig aber fundiert
+- Humor: parenthetisch und selbstironisch, nie forciert
+- Wie ein echter Mensch geschrieben, KEINE KI-Sprache
+
+VERBOTEN:
+- KEINE Begrüßung, kein "Willkommen", kein "Hallo"
+- KEINE CTAs wie "Lass ein Like da", "Abonniere den Kanal", "Link in der Beschreibung"
+- KEINE Clickbait-Floskeln: "Schnall dich an", "darfst du nicht verpassen", "du wirst nicht glauben"
+- KEINE leeren Phrasen, Metaphern, Füllwörter, kein Pathos, keine blumige Sprache
+- KEINE Regieanweisungen in eckigen Klammern wie [flüsternd], [ernst], [staunend]
+- KEINE Markdown-Formatierung im Sprechtext (kein **, kein *, kein #)
+
+HOOK (erste 2-3 Sätze, max 50 Wörter):
+- Erster Satz = Bild, Szene oder provokante Behauptung
+- Zwei Strategien: (A) filmisches Eintauchen oder (B) Alltagssituation ins Absurde gedreht
+- NIE "In diesem Video..." oder ähnliches
+
+STRUKTUR:
+- Jede Zahl → greifbarer Alltagsvergleich ("So schwer wie drei Kleinwagen")
+- Spannung durch Eskalation: "Aber es kommt noch schlimmer"
+- Kurze Fragment-Sätze nach langen Erklärungen für Rhythmus
+- Fakten in Narration eingebettet, NIE trockene Aufzählung
+- "Aber" als wichtigstes Strukturelement — Wendungen, Kontraste, Überraschungen
+- Ende: Rückbezug auf Kernthese mit leichter Drehung, nie predigen
+
+REFERENZ-KANÄLE: Extinct Zoo (EN), Eclesso (IT) — sachlich, dicht, überraschend
+
+ELEVENLABS-OPTIMIERUNG:
+Das Skript wird direkt in ElevenLabs (eleven_multilingual_v2) vertont. Beachte:
+- Nutze GROSSBUCHSTABEN für betonte Schlüsselwörter (sparsam, max 2-3 pro Absatz)
+- Nutze Ellipsen ... für natürliche Denkpausen und Spannungsmomente
+- Setze <break time="1.0s" /> NUR zwischen Kapitelübergängen (max 4-5 im ganzen Skript)
+- Schreibe kurze bis mittlere Sätze — lange Schachtelsätze klingen vorgelesen schlecht
+- Rhetorische Fragen einbauen — sie erzeugen natürliche Intonationswechsel
+
+LÄNGE: Ziel sind 2.000 Wörter reiner Sprechtext.
 
 FORMAT:
-- NUR Sprechtext. KEINE Regieanweisungen, KEINE eckigen Klammern wie [flüsternd], [ernst]. KEINE Anmerkungen.
-- KEINE <break> Tags oder SSML-Tags.
-- Schreibe natürlich, wie ein Sprecher es vorlesen würde.
+Antworte mit:
 
-STRUKTUR mit Überschriften in eckigen Klammern (werden vor Vertonung entfernt):
+## TITEL
+(3 Vorschläge, nummeriert. Sachlich-neugierig, keine Clickbait-Floskeln.)
 
-[HOOK] — Packender Einstieg, 3-4 Sätze.
-[INTRO] — Thema vorstellen, Kontext, 5-6 Sätze.
-[KAPITEL 1: Titel] — Erster Hauptteil, 3 Absätze mit Fakten und Beispielen.
-[KAPITEL 2: Titel] — Zweiter Hauptteil, 3 Absätze, neuer Aspekt.
-[KAPITEL 3: Titel] — Dritter Hauptteil, 3 Absätze, Wendepunkt oder Überraschung.
-[FAZIT] — Zusammenfassung, Ausblick, Call-to-Action, 4-5 Sätze.`;
+## SKRIPT
+(Reiner Sprechtext mit Kapitelmarkern die vor der Vertonung entfernt werden:)
+
+[HOOK] — Max 50 Wörter. Sofort rein ins Thema.
+[INTRO] — Kontext, worum es geht, warum es relevant ist.
+[KAPITEL 1: Titel] — Erster Hauptteil, 3 Absätze.
+[KAPITEL 2: Titel] — Zweiter Hauptteil, 3 Absätze.
+[KAPITEL 3: Titel] — Dritter Hauptteil, 3 Absätze.
+[FAZIT] — Rückbezug auf Hook/Kernthese mit Drehung. Kein CTA, keine Moral.
+
+${style ? `ZUSÄTZLICHE STIL-HINWEISE VOM NUTZER:\n${style}` : ''}`;
 
   const sourceInfo = idea.sourceVideos
     .slice(0, 5)
     .map(v => `- "${v.title}" (${formatCompact(v.views)} Views)`)
     .join('\n');
 
-  const userPrompt = `Schreibe ein Video-Skript (ca. 2.000 Wörter, 12-15 Minuten) zum Thema: "${idea.topic}"
+  const userPrompt = `Thema: "${idea.topic}"
 
 Trending Videos als Inspiration:
 ${sourceInfo}
 
 Blickwinkel: ${idea.suggestedAngle}
 
-NUR Sprechtext, keine Anmerkungen, keine SSML-Tags. Wird direkt in ElevenLabs vertont.`;
+Schreibe ca. 2.000 Wörter. Direkt rein, keine Einleitung. ElevenLabs-optimiert: GROSSBUCHSTABEN für Betonung, ... für Pausen, <break time="1.0s" /> nur zwischen Kapiteln.`;
 
   const response = await claudeGenerate(systemPrompt, userPrompt);
   return parseScriptResponse(response, idea.topic);
@@ -2006,17 +2045,27 @@ function prepareScriptForTTS(rawScript) {
   // Remove chapter headings — not spoken
   text = text.replace(/\[(?:HOOK|INTRO|KAPITEL \d+[^\]]*|FAZIT|OUTRO|ABSCHNITT \d+[^\]]*)\]\s*/gi, '\n');
 
-  // Remove any remaining square bracket annotations
+  // Remove any remaining square bracket annotations (stage directions etc.)
   text = text.replace(/\[[^\]]*\]\s*/g, '');
-
-  // Remove any SSML/break tags that slipped through
-  text = text.replace(/<break[^>]*\/?>/g, '');
-  text = text.replace(/<[^>]+>/g, '');
 
   // Remove markdown formatting
   text = text.replace(/\*\*([^*]+)\*\*/g, '$1');
   text = text.replace(/\*([^*]+)\*/g, '$1');
-  text = text.replace(/^#{1,3}\s+/gm, '');
+  text = text.replace(/^#{1,3}\s+.*/gm, '');
+
+  // Keep <break> tags — ElevenLabs supports them natively
+  // But cap at max 5 and normalize to max 1.5s
+  let breakCount = 0;
+  text = text.replace(/<break\s+time="([^"]+)"\s*\/?>/g, (match, time) => {
+    breakCount++;
+    if (breakCount > 5) return '';
+    const seconds = parseFloat(time);
+    const capped = Math.min(seconds, 1.5);
+    return `<break time="${capped}s" />`;
+  });
+
+  // Remove any other HTML/XML tags that aren't break
+  text = text.replace(/<(?!break)[^>]+>/g, '');
 
   // Clean up excessive whitespace
   text = text.replace(/\n{3,}/g, '\n\n');
