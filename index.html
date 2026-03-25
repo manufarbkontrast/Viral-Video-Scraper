@@ -801,6 +801,75 @@ body {
   font-size: 0.85rem;
 }
 
+/* Script overview table */
+.script-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  margin-bottom: calc(var(--unit) * 1);
+}
+
+.script-table td {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--reef);
+  vertical-align: top;
+}
+
+.script-table td:first-child {
+  font-weight: 600;
+  color: var(--fossil);
+  white-space: nowrap;
+  width: 140px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.script-table td:last-child {
+  color: var(--bone);
+  font-family: var(--font-mono);
+}
+
+.voiceover-part {
+  margin-bottom: calc(var(--unit) * 2);
+  border: 1px solid var(--reef);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.voiceover-part-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--shelf);
+  border-bottom: 1px solid var(--reef);
+}
+
+.voiceover-part-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--idea);
+}
+
+.voiceover-part-meta {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--fossil);
+}
+
+.voiceover-part-body {
+  padding: calc(var(--unit) * 2);
+  font-size: 0.82rem;
+  color: var(--bone);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background: var(--abyss);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
 .script-actions {
   display: flex;
   gap: var(--unit);
@@ -1471,6 +1540,13 @@ body {
         <div class="script-loading-text">Skript wird generiert...</div>
       </div>
       <div id="scriptResult" style="display:none;">
+        <!-- Übersichtstabelle -->
+        <div class="script-section">
+          <table class="script-table" id="scriptMetaTable">
+            <tbody></tbody>
+          </table>
+        </div>
+        <!-- Titel -->
         <div class="script-section">
           <div class="script-section-header">
             <span class="script-section-label">Titel-Vorschläge</span>
@@ -1478,16 +1554,10 @@ body {
           </div>
           <div class="script-content" id="scriptTitles"></div>
         </div>
-        <div class="script-section">
-          <div class="script-section-header">
-            <span class="script-section-label">Skript</span>
-            <div style="display:flex;align-items:center;gap:calc(var(--unit) * 2);">
-              <span class="script-word-count" id="scriptWordCount" style="font-family:var(--font-mono);font-size:0.7rem;color:var(--fossil);"></span>
-              <button class="script-copy-btn" onclick="copySection('scriptText')">Kopieren</button>
-            </div>
-          </div>
-          <div class="script-content" id="scriptText"></div>
-        </div>
+        <!-- Voiceover-Abschnitte (dynamisch befüllt) -->
+        <div id="voiceoverSections"></div>
+        <!-- Gesamtskript (versteckt, für Gesamt-Copy und TTS) -->
+        <div id="scriptTextHidden" style="display:none;"></div>
       </div>
       <div class="script-error" id="scriptError" style="display:none;"></div>
       <!-- Audio Section -->
@@ -1907,6 +1977,53 @@ Schreibe ca. 2.000 Wörter. Direkt rein, keine Einleitung. ElevenLabs-optimiert:
   return parseScriptResponse(response, idea.topic);
 }
 
+function splitScriptSections(script) {
+  const sectionPattern = /\[(HOOK|INTRO|KAPITEL \d+[^\]]*|FAZIT|OUTRO|ABSCHNITT \d+[^\]]*)\]/gi;
+  const parts = [];
+  let lastIndex = 0;
+  let lastLabel = null;
+  let match;
+
+  while ((match = sectionPattern.exec(script)) !== null) {
+    if (lastLabel !== null) {
+      const body = script.substring(lastIndex, match.index).trim();
+      if (body) {
+        const cleanBody = body
+          .replace(/^#{1,3}\s+.*/gm, '')
+          .replace(/\*\*([^*]+)\*\*/g, '$1')
+          .replace(/\*([^*]+)\*/g, '$1')
+          .trim();
+        const wc = cleanBody.replace(/<[^>]+>/g, '').replace(/\[[^\]]*\]/g, '').split(/\s+/).filter(Boolean).length;
+        parts.push(Object.freeze({ label: lastLabel, body: cleanBody, wordCount: wc }));
+      }
+    }
+    lastLabel = match[1].trim();
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Last section
+  if (lastLabel !== null) {
+    const body = script.substring(lastIndex).trim();
+    if (body) {
+      const cleanBody = body
+        .replace(/^#{1,3}\s+.*/gm, '')
+        .replace(/\*\*([^*]+)\*\*/g, '$1')
+        .replace(/\*([^*]+)\*/g, '$1')
+        .trim();
+      const wc = cleanBody.replace(/<[^>]+>/g, '').replace(/\[[^\]]*\]/g, '').split(/\s+/).filter(Boolean).length;
+      parts.push(Object.freeze({ label: lastLabel, body: cleanBody, wordCount: wc }));
+    }
+  }
+
+  // Fallback: if no sections found, treat whole script as one block
+  if (parts.length === 0 && script.trim()) {
+    const wc = script.replace(/<[^>]+>/g, '').split(/\s+/).filter(Boolean).length;
+    parts.push(Object.freeze({ label: 'SKRIPT', body: script.trim(), wordCount: wc }));
+  }
+
+  return parts;
+}
+
 function parseScriptResponse(text, topic) {
   const titleMatch = text.match(/## TITEL\s*\n([\s\S]*?)(?=## SKRIPT|$)/i);
   const scriptMatch = text.match(/## SKRIPT\s*\n([\s\S]*?)$/i);
@@ -1917,6 +2034,9 @@ function parseScriptResponse(text, topic) {
   if (!titles && !script) {
     script = text.trim();
   }
+
+  // Split script into voiceover sections
+  const sections = splitScriptSections(script);
 
   // Count only spoken words (strip tags, headings, annotations)
   const spokenText = script
@@ -1931,6 +2051,7 @@ function parseScriptResponse(text, topic) {
     topic,
     titles,
     script,
+    sections,
     wordCount,
     generatedAt: Date.now(),
   });
@@ -2081,7 +2202,7 @@ async function generateTTS() {
     return;
   }
 
-  const scriptEl = document.getElementById('scriptText');
+  const scriptEl = document.getElementById('scriptTextHidden');
   if (!scriptEl || !scriptEl.textContent.trim()) {
     showToast('Kein Skript vorhanden', 'warn');
     return;
@@ -2936,15 +3057,63 @@ function renderScriptContent(scriptRecord) {
   loading.style.display = 'none';
   result.style.display = 'block';
 
-  document.getElementById('scriptTitles').textContent = scriptRecord.titles;
-  document.getElementById('scriptText').textContent = scriptRecord.script;
-
-  // Show word count and estimated duration
+  // Übersichtstabelle
   const wc = scriptRecord.wordCount || 0;
   const estMinutes = Math.round(wc / 130);
-  document.getElementById('scriptWordCount').textContent = `${wc.toLocaleString('de-DE')} Wörter ~ ${estMinutes} Min.`;
+  const sections = scriptRecord.sections || [];
+  const idea = appState.currentIdea;
 
-  // Show TTS button if ElevenLabs is configured
+  const tableRows = [
+    ['Thema', escapeHtml(scriptRecord.topic)],
+    ['Wörter', `${wc.toLocaleString('de-DE')}`],
+    ['Geschätzte Dauer', `~${estMinutes} Min.`],
+    ['Abschnitte', `${sections.length}`],
+    ['Quell-Videos', idea ? `${idea.videoCount}` : '--'],
+    ['Gesamt-Views', idea ? formatCompact(idea.totalViews) : '--'],
+  ];
+
+  const tbody = document.querySelector('#scriptMetaTable tbody');
+  tbody.innerHTML = tableRows.map(([label, value]) =>
+    `<tr><td>${label}</td><td>${value}</td></tr>`
+  ).join('');
+
+  // Titel
+  document.getElementById('scriptTitles').textContent = scriptRecord.titles;
+
+  // Voiceover-Abschnitte
+  const voContainer = document.getElementById('voiceoverSections');
+  const sectionCards = sections.map((sec, idx) => {
+    const secId = `voSection${idx}`;
+    const estSec = Math.round((sec.wordCount / 130) * 60);
+    const estLabel = estSec >= 60
+      ? `${Math.floor(estSec / 60)}:${String(estSec % 60).padStart(2, '0')} Min.`
+      : `${estSec} Sek.`;
+
+    return `<div class="voiceover-part">
+      <div class="voiceover-part-header">
+        <span class="voiceover-part-label">${escapeHtml(sec.label)}</span>
+        <div style="display:flex;align-items:center;gap:calc(var(--unit) * 2);">
+          <span class="voiceover-part-meta">${sec.wordCount} Wörter ~ ${estLabel}</span>
+          <button class="script-copy-btn" onclick="copySection('${secId}')">Kopieren</button>
+        </div>
+      </div>
+      <div class="voiceover-part-body" id="${secId}">${escapeHtml(sec.body)}</div>
+    </div>`;
+  }).join('');
+
+  voContainer.innerHTML = `
+    <div class="script-section">
+      <div class="script-section-header">
+        <span class="script-section-label">Voiceover-Abschnitte</span>
+        <button class="script-copy-btn" onclick="copyAllSections()">Alles kopieren</button>
+      </div>
+      ${sectionCards}
+    </div>`;
+
+  // Verstecktes Gesamtskript für TTS
+  document.getElementById('scriptTextHidden').textContent = scriptRecord.script;
+
+  // TTS Button
   const btnTTS = document.getElementById('btnTTS');
   btnTTS.style.display = getElevenLabsKey() ? 'inline-flex' : 'none';
 
@@ -2979,6 +3148,24 @@ function regenerateScript() {
   } catch (_) {}
 
   runScriptGeneration(idea);
+}
+
+function copyAllSections() {
+  const container = document.getElementById('voiceoverSections');
+  if (!container) return;
+  const parts = container.querySelectorAll('.voiceover-part-body');
+  const labels = container.querySelectorAll('.voiceover-part-label');
+  const lines = [];
+  parts.forEach((part, i) => {
+    const label = labels[i] ? labels[i].textContent : `Teil ${i + 1}`;
+    lines.push(`[${label}]\n${part.textContent}\n`);
+  });
+  const text = lines.join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Gesamtes Skript kopiert', 'success');
+  }).catch(() => {
+    showToast('Kopieren fehlgeschlagen', 'error');
+  });
 }
 
 function copySection(elementId) {
