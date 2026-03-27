@@ -687,7 +687,7 @@ body {
   background: var(--deep);
   border: 1px solid var(--trench);
   border-radius: var(--radius-lg);
-  max-width: 900px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: calc(var(--unit) * 4);
 }
@@ -858,6 +858,41 @@ body {
   color: var(--fossil);
 }
 
+.source-video-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: calc(var(--unit) * 2);
+  padding: 8px 12px;
+  border: 1px solid var(--reef);
+  border-radius: var(--radius);
+  margin-bottom: calc(var(--unit));
+  background: var(--abyss);
+  text-decoration: none;
+  transition: border-color 0.15s;
+}
+
+.source-video-link:hover {
+  border-color: var(--signal);
+}
+
+.source-video-title {
+  font-size: 0.8rem;
+  color: var(--signal);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.source-video-meta {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  color: var(--fossil);
+  white-space: nowrap;
+}
+
 .voiceover-part-body {
   padding: calc(var(--unit) * 2);
   font-size: 0.82rem;
@@ -878,74 +913,157 @@ body {
   border-top: 1px solid var(--reef);
 }
 
-/* Audio player */
-.audio-section {
-  margin-bottom: calc(var(--unit) * 3);
-  padding: calc(var(--unit) * 2.5);
-  background: var(--shelf);
-  border: 1px solid var(--reef);
+.elevenlabs-badge {
+  background: var(--discovery);
+  color: var(--abyss);
+  padding: 2px 6px;
   border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
 }
 
-.audio-section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: calc(var(--unit) * 2);
+.elevenlabs-body {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.8;
 }
 
-.audio-section-label {
+.elevenlabs-body .el-tag-emotion {
+  display: inline;
+  background: color-mix(in srgb, var(--idea) 25%, transparent);
+  color: var(--idea);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.elevenlabs-body .el-tag-caps {
+  color: var(--signal);
+  font-weight: 700;
+}
+
+.elevenlabs-body .el-tag-pause {
+  color: var(--fossil);
+  letter-spacing: 0.2em;
+}
+
+/* Side-by-side DE/EN grid */
+.bilingual-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(var(--unit) * 2);
+}
+
+.bilingual-col-label {
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--growth);
+  color: var(--idea);
+  margin-bottom: calc(var(--unit) * 1.5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.audio-controls {
+.btn-export {
+  background: var(--shelf);
+  border-color: var(--discovery);
+  color: var(--discovery);
+}
+
+.btn-export:hover {
+  background: color-mix(in srgb, var(--discovery) 15%, var(--shelf));
+}
+
+/* PDF print styles */
+@media print {
+  body > *:not(.script-overlay) { display: none !important; }
+  .script-overlay { position: static !important; background: #fff !important; }
+  .script-overlay .script-modal {
+    max-width: 100% !important;
+    max-height: none !important;
+    width: 100% !important;
+    background: #fff !important;
+    color: #111 !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+  .script-overlay .script-actions,
+  .script-overlay .section-audio,
+  .script-overlay .section-tts-btn,
+  .script-overlay .script-copy-btn,
+  .script-overlay .modal-close { display: none !important; }
+  .script-overlay .voiceover-part-body {
+    max-height: none !important;
+    overflow: visible !important;
+    color: #111 !important;
+    background: #fff !important;
+  }
+  .script-overlay .voiceover-part-header {
+    background: #f5f5f4 !important;
+    border-color: #ddd !important;
+  }
+  .script-overlay .voiceover-part {
+    border-color: #ddd !important;
+    break-inside: avoid;
+  }
+  .script-overlay .script-section-label {
+    color: #333 !important;
+    font-size: 0.8rem !important;
+  }
+  .script-overlay .voiceover-part-label { color: #555 !important; }
+  .script-overlay .voiceover-part-meta { color: #777 !important; }
+  .script-overlay .script-header { border-color: #ddd !important; }
+  .script-overlay .script-topic { color: #111 !important; }
+  .script-overlay .script-topic-sub { color: #555 !important; }
+  .script-overlay .script-table { color: #111 !important; }
+  .script-overlay .script-table td { border-color: #ddd !important; color: #111 !important; }
+  .script-overlay .script-content {
+    background: #fff !important;
+    border-color: #ddd !important;
+    color: #111 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .script-overlay .elevenlabs-badge {
+    background: #f59e0b !important;
+    color: #111 !important;
+  }
+  .script-overlay #scriptBody {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .bilingual-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .bilingual-col-label { color: #333 !important; }
+  .source-video-link { border-color: #ddd !important; background: #fff !important; }
+  .source-video-title { color: #0369a1 !important; }
+  .source-video-meta { color: #555 !important; }
+  .elevenlabs-body .el-tag-emotion { background: #f3e8ff !important; color: #7c3aed !important; }
+  .elevenlabs-body .el-tag-caps { color: #0369a1 !important; }
+  .elevenlabs-body .el-tag-pause { color: #777 !important; }
+}
+
+/* Section audio player (inline per ElevenLabs section) */
+.section-audio {
+  padding: calc(var(--unit) * 1.5) calc(var(--unit) * 2);
+  border-top: 1px solid var(--reef);
+  background: var(--shelf);
+}
+
+.section-audio-progress {
   display: flex;
   align-items: center;
   gap: calc(var(--unit) * 1.5);
 }
 
-.audio-player {
-  width: 100%;
-  height: 36px;
-  border-radius: var(--radius);
-  outline: none;
-}
-
-.audio-player::-webkit-media-controls-panel {
-  background: var(--deep);
-}
-
-.audio-download-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
-  color: var(--growth);
-  text-decoration: none;
-  padding: 6px 12px;
-  border: 1px solid rgba(52, 211, 153, 0.3);
-  border-radius: var(--radius);
-  background: var(--growth-dim);
-  transition: all 0.15s;
-}
-
-.audio-download-link:hover {
-  background: rgba(52, 211, 153, 0.2);
-  border-color: rgba(52, 211, 153, 0.5);
-}
-
-.audio-progress {
-  display: flex;
-  align-items: center;
-  gap: calc(var(--unit) * 1.5);
-  padding: calc(var(--unit) * 2) 0;
-}
-
-.audio-progress-bar {
+.section-audio-bar {
   flex: 1;
   height: 4px;
   background: var(--deep);
@@ -953,30 +1071,79 @@ body {
   overflow: hidden;
 }
 
-.audio-progress-fill {
+.section-audio-fill {
   height: 100%;
   background: var(--growth);
-  border-radius: 2px;
-  transition: width 0.3s ease;
-  box-shadow: 0 0 8px var(--growth-dim);
+  width: 0%;
+  transition: width 0.3s;
 }
 
-.audio-progress-label {
+.section-audio-label {
+  font-size: 0.65rem;
+  color: var(--fossil);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--sediment);
   white-space: nowrap;
 }
 
-.btn-tts {
-  background: var(--growth-dim);
-  border-color: rgba(52, 211, 153, 0.3);
-  color: var(--growth);
+.section-audio-player {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 1.5);
 }
 
-.btn-tts:hover {
+.section-audio-player audio {
+  flex: 1;
+  height: 32px;
+  border-radius: var(--radius);
+  outline: none;
+}
+
+.section-audio-player audio::-webkit-media-controls-panel {
+  background: var(--deep);
+}
+
+.section-audio-download {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  color: var(--growth);
+  text-decoration: none;
+  padding: 4px 10px;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  border-radius: var(--radius);
+  background: var(--growth-dim);
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.section-audio-download:hover {
   background: rgba(52, 211, 153, 0.2);
   border-color: rgba(52, 211, 153, 0.5);
+}
+
+.section-tts-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  border-radius: var(--radius);
+  background: var(--growth-dim);
+  color: var(--growth);
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.section-tts-btn:hover {
+  background: rgba(52, 211, 153, 0.2);
+  border-color: rgba(52, 211, 153, 0.5);
+}
+
+.section-tts-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .btn-idea {
@@ -1308,6 +1475,9 @@ body {
   .script-modal {
     padding: calc(var(--unit) * 2);
   }
+  .bilingual-grid {
+    grid-template-columns: 1fr;
+  }
   .script-content {
     max-height: 300px;
   }
@@ -1554,37 +1724,23 @@ body {
           </div>
           <div class="script-content" id="scriptTitles"></div>
         </div>
+        <!-- Quell-Videos -->
+        <div class="script-section" id="scriptSourceSection" style="display:none;">
+          <div class="script-section-header">
+            <span class="script-section-label">Vorlage</span>
+          </div>
+          <div id="scriptSources"></div>
+        </div>
         <!-- Voiceover-Abschnitte (dynamisch befüllt) -->
         <div id="voiceoverSections"></div>
         <!-- Gesamtskript (versteckt, für Gesamt-Copy und TTS) -->
         <div id="scriptTextHidden" style="display:none;"></div>
       </div>
       <div class="script-error" id="scriptError" style="display:none;"></div>
-      <!-- Audio Section -->
-      <div class="audio-section" id="audioSection" style="display:none;">
-        <div class="audio-section-header">
-          <span class="audio-section-label">Vertonung</span>
-        </div>
-        <div id="audioProgress" style="display:none;">
-          <div class="audio-progress">
-            <div class="audio-progress-bar">
-              <div class="audio-progress-fill" id="audioProgressFill" style="width:0%"></div>
-            </div>
-            <span class="audio-progress-label" id="audioProgressLabel">Wird generiert...</span>
-          </div>
-        </div>
-        <div id="audioPlayerWrap" style="display:none;">
-          <audio class="audio-player" id="audioPlayer" controls></audio>
-          <div style="margin-top:calc(var(--unit) * 1.5);display:flex;gap:var(--unit);">
-            <a class="audio-download-link" id="audioDownload" download="voiceover.mp3">MP3 herunterladen</a>
-          </div>
-        </div>
-        <div id="audioError" style="display:none;color:var(--decline);font-size:0.82rem;"></div>
-      </div>
     </div>
     <div class="script-actions">
       <button class="btn" onclick="closeScriptModal()">Schließen</button>
-      <button class="btn btn-tts" id="btnTTS" onclick="generateTTS()" style="display:none;">Vertonen</button>
+      <button class="btn btn-export" onclick="exportScriptPDF()">PDF Export</button>
       <button class="btn btn-idea" id="btnRegenerate" onclick="regenerateScript()">Neu generieren</button>
     </div>
   </div>
@@ -1913,7 +2069,6 @@ VERBOTEN:
 - KEINE CTAs wie "Lass ein Like da", "Abonniere den Kanal", "Link in der Beschreibung"
 - KEINE Clickbait-Floskeln: "Schnall dich an", "darfst du nicht verpassen", "du wirst nicht glauben"
 - KEINE leeren Phrasen, Metaphern, Füllwörter, kein Pathos, keine blumige Sprache
-- KEINE Regieanweisungen in eckigen Klammern wie [flüsternd], [ernst], [staunend]
 - KEINE Markdown-Formatierung im Sprechtext (kein **, kein *, kein #)
 
 HOOK (erste 2-3 Sätze, max 50 Wörter):
@@ -1931,13 +2086,29 @@ STRUKTUR:
 
 REFERENZ-KANÄLE: Extinct Zoo (EN), Eclesso (IT) — sachlich, dicht, überraschend
 
-ELEVENLABS-OPTIMIERUNG:
-Das Skript wird direkt in ElevenLabs (eleven_multilingual_v2) vertont. Beachte:
+ELEVENLABS v3 AUDIO-TAGS:
+Das Skript wird direkt in ElevenLabs (Eleven v3) vertont. Nutze Audio-Tags für lebendige Performance:
+
+Emotions-Tags (sparsam, max 8-12 pro Skript):
+- [whispers] vor leisen, intimen Passagen
+- [sighs] für Resignation oder Ernüchterung
+- [excited] vor enthusiastischen Stellen
+- [laughs] oder [chuckles] für humorvolle Momente
+- [sarcastic] für ironische Passagen
+- [curious] für fragende, neugierige Stellen
+
+Delivery-Tags:
+- [serious] für ernste, gewichtige Aussagen
+- [dramatically] für dramatische Wendepunkte
+
+Regeln:
+- Tags in eckigen Klammern DIREKT VOR dem betroffenen Satz platzieren
 - Nutze GROSSBUCHSTABEN für betonte Schlüsselwörter (sparsam, max 2-3 pro Absatz)
 - Nutze Ellipsen ... für natürliche Denkpausen und Spannungsmomente
-- Setze <break time="1.0s" /> NUR zwischen Kapitelübergängen (max 4-5 im ganzen Skript)
+- KEINE <break> Tags — v3 nutzt Interpunktion und Ellipsen für Pausen
 - Schreibe kurze bis mittlere Sätze — lange Schachtelsätze klingen vorgelesen schlecht
 - Rhetorische Fragen einbauen — sie erzeugen natürliche Intonationswechsel
+- Audio-Tags nur dort wo sie den Vortrag WIRKLICH verbessern, nicht inflationär
 
 LÄNGE: Ziel sind 2.000 Wörter reiner Sprechtext.
 
@@ -1957,6 +2128,18 @@ Antworte mit:
 [KAPITEL 3: Titel] — Dritter Hauptteil, 3 Absätze.
 [FAZIT] — Rückbezug auf Hook/Kernthese mit Drehung. Kein CTA, keine Moral.
 
+## ENGLISH
+(Vollständige, hochwertige englische Übersetzung des SKRIPT-Teils. Gleiche Struktur, gleiche Kapitelmarker auf Englisch:)
+
+[HOOK] — Same content, translated.
+[INTRO] — Same content, translated.
+[CHAPTER 1: Title] — Same content, translated.
+[CHAPTER 2: Title] — Same content, translated.
+[CHAPTER 3: Title] — Same content, translated.
+[CONCLUSION] — Same content, translated.
+
+Wichtig: Die englische Version muss den gleichen Ton, Stil und die gleiche Qualität wie das deutsche Original haben. Keine wörtliche Übersetzung — idiomatisches Englisch.
+
 ${style ? `ZUSÄTZLICHE STIL-HINWEISE VOM NUTZER:\n${style}` : ''}`;
 
   const sourceInfo = idea.sourceVideos
@@ -1971,7 +2154,7 @@ ${sourceInfo}
 
 Blickwinkel: ${idea.suggestedAngle}
 
-Schreibe ca. 2.000 Wörter. Direkt rein, keine Einleitung. ElevenLabs-optimiert: GROSSBUCHSTABEN für Betonung, ... für Pausen, <break time="1.0s" /> nur zwischen Kapiteln.`;
+Schreibe ca. 2.000 Wörter. Direkt rein, keine Einleitung. ElevenLabs v3: Audio-Tags wie [whispers], [sighs], [excited], [laughs], [sarcastic] für lebendige Performance. GROSSBUCHSTABEN für Betonung, ... für Pausen.`;
 
   const response = await claudeGenerate(systemPrompt, userPrompt);
   return parseScriptResponse(response, idea.topic);
@@ -2024,12 +2207,59 @@ function splitScriptSections(script) {
   return parts;
 }
 
+function splitScriptSectionsEnglish(script) {
+  const sectionPattern = /\[(HOOK|INTRO|CHAPTER \d+[^\]]*|CONCLUSION|OUTRO|SECTION \d+[^\]]*)\]/gi;
+  const parts = [];
+  let lastIndex = 0;
+  let lastLabel = null;
+  let match;
+
+  while ((match = sectionPattern.exec(script)) !== null) {
+    if (lastLabel !== null) {
+      const body = script.substring(lastIndex, match.index).trim();
+      if (body) {
+        const cleanBody = body
+          .replace(/^#{1,3}\s+.*/gm, '')
+          .replace(/\*\*([^*]+)\*\*/g, '$1')
+          .replace(/\*([^*]+)\*/g, '$1')
+          .trim();
+        const wc = cleanBody.replace(/<[^>]+>/g, '').replace(/\[[^\]]*\]/g, '').split(/\s+/).filter(Boolean).length;
+        parts.push(Object.freeze({ label: lastLabel, body: cleanBody, wordCount: wc }));
+      }
+    }
+    lastLabel = match[1].trim();
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastLabel !== null) {
+    const body = script.substring(lastIndex).trim();
+    if (body) {
+      const cleanBody = body
+        .replace(/^#{1,3}\s+.*/gm, '')
+        .replace(/\*\*([^*]+)\*\*/g, '$1')
+        .replace(/\*([^*]+)\*/g, '$1')
+        .trim();
+      const wc = cleanBody.replace(/<[^>]+>/g, '').replace(/\[[^\]]*\]/g, '').split(/\s+/).filter(Boolean).length;
+      parts.push(Object.freeze({ label: lastLabel, body: cleanBody, wordCount: wc }));
+    }
+  }
+
+  // Fallback: try German markers if no English markers found
+  if (parts.length === 0 && script.trim()) {
+    return splitScriptSections(script);
+  }
+
+  return parts;
+}
+
 function parseScriptResponse(text, topic) {
   const titleMatch = text.match(/## TITEL\s*\n([\s\S]*?)(?=## SKRIPT|$)/i);
-  const scriptMatch = text.match(/## SKRIPT\s*\n([\s\S]*?)$/i);
+  const scriptMatch = text.match(/## SKRIPT\s*\n([\s\S]*?)(?=## ENGLISH|$)/i);
+  const englishMatch = text.match(/## ENGLISH\s*\n([\s\S]*?)$/i);
 
   const titles = (titleMatch ? titleMatch[1] : '').trim();
   let script = (scriptMatch ? scriptMatch[1] : '').trim();
+  let englishScript = (englishMatch ? englishMatch[1] : '').trim();
 
   if (!titles && !script) {
     script = text.trim();
@@ -2037,6 +2267,11 @@ function parseScriptResponse(text, topic) {
 
   // Split script into voiceover sections
   const sections = splitScriptSections(script);
+
+  // Split English script into sections
+  const englishSections = englishScript
+    ? splitScriptSectionsEnglish(englishScript)
+    : [];
 
   // Count only spoken words (strip tags, headings, annotations)
   const spokenText = script
@@ -2051,7 +2286,9 @@ function parseScriptResponse(text, topic) {
     topic,
     titles,
     script,
+    englishScript,
     sections,
+    englishSections,
     wordCount,
     generatedAt: Date.now(),
   });
@@ -2143,16 +2380,29 @@ async function loadElevenLabsVoices() {
     const voices = data.voices || [];
 
     const savedVoice = getElevenLabsVoice();
+
+    // Auto-select "Mike - Kind Bedtime storyteller" as default if no voice saved
+    const defaultVoice = savedVoice
+      || (voices.find(v => /mike/i.test(v.name) && /bedtime|storyteller/i.test(v.name))?.voice_id)
+      || '';
+
     const options = voices
       .sort((a, b) => a.name.localeCompare(b.name))
       .map(v => {
         const label = `${v.name} (${v.labels?.accent || v.labels?.gender || 'custom'})`;
-        const selected = v.voice_id === savedVoice ? ' selected' : '';
+        const selected = v.voice_id === defaultVoice ? ' selected' : '';
         return `<option value="${v.voice_id}"${selected}>${escapeHtml(label)}</option>`;
       })
       .join('');
 
     select.innerHTML = `<option value="">Stimme wählen...</option>${options}`;
+
+    // Persist default selection
+    if (!savedVoice && defaultVoice) {
+      localStorage.setItem(STORAGE_KEYS.ELEVENLABS_VOICE, defaultVoice);
+      showToast(`Standard-Stimme "Mike" ausgewählt`, 'success');
+    }
+
     showToast(`${voices.length} Stimmen geladen`, 'success');
   } catch (err) {
     select.innerHTML = '<option value="">Fehler beim Laden</option>';
@@ -2166,27 +2416,24 @@ function prepareScriptForTTS(rawScript) {
   // Remove chapter headings — not spoken
   text = text.replace(/\[(?:HOOK|INTRO|KAPITEL \d+[^\]]*|FAZIT|OUTRO|ABSCHNITT \d+[^\]]*)\]\s*/gi, '\n');
 
-  // Remove any remaining square bracket annotations (stage directions etc.)
-  text = text.replace(/\[[^\]]*\]\s*/g, '');
+  // Keep ElevenLabs v3 audio tags (emotions/delivery), remove other bracket annotations
+  const V3_AUDIO_TAGS = new Set([
+    'whispers','sighs','laughs','chuckles','excited','sarcastic',
+    'curious','serious','dramatically','crying','snorts',
+    'exhales','giggles','gasps','mischievously',
+  ]);
+  text = text.replace(/\[([^\]]*)\]/g, (match, inner) => {
+    const tag = inner.trim().toLowerCase();
+    return V3_AUDIO_TAGS.has(tag) ? match : '';
+  });
 
   // Remove markdown formatting
   text = text.replace(/\*\*([^*]+)\*\*/g, '$1');
   text = text.replace(/\*([^*]+)\*/g, '$1');
   text = text.replace(/^#{1,3}\s+.*/gm, '');
 
-  // Keep <break> tags — ElevenLabs supports them natively
-  // But cap at max 5 and normalize to max 1.5s
-  let breakCount = 0;
-  text = text.replace(/<break\s+time="([^"]+)"\s*\/?>/g, (match, time) => {
-    breakCount++;
-    if (breakCount > 5) return '';
-    const seconds = parseFloat(time);
-    const capped = Math.min(seconds, 1.5);
-    return `<break time="${capped}s" />`;
-  });
-
-  // Remove any other HTML/XML tags that aren't break
-  text = text.replace(/<(?!break)[^>]+>/g, '');
+  // Remove all HTML/XML tags — v3 doesn't support SSML
+  text = text.replace(/<[^>]+>/g, '');
 
   // Clean up excessive whitespace
   text = text.replace(/\n{3,}/g, '\n\n');
@@ -2195,47 +2442,46 @@ function prepareScriptForTTS(rawScript) {
   return text.trim();
 }
 
-async function generateTTS() {
+async function generateSectionTTS(idx) {
   const voiceId = getElevenLabsVoice();
   if (!voiceId) {
     showToast('Bitte zuerst eine Stimme in den Einstellungen wählen', 'warn');
     return;
   }
 
-  const scriptEl = document.getElementById('scriptTextHidden');
-  if (!scriptEl || !scriptEl.textContent.trim()) {
-    showToast('Kein Skript vorhanden', 'warn');
+  const bodyEl = document.getElementById(`elSection${idx}`);
+  if (!bodyEl || !bodyEl.textContent.trim()) {
+    showToast('Kein Text vorhanden', 'warn');
     return;
   }
 
-  const rawScript = scriptEl.textContent;
-  const ttsText = prepareScriptForTTS(rawScript);
+  const btn = document.getElementById(`elTtsBtn${idx}`);
+  const audioArea = document.getElementById(`elAudio${idx}`);
 
-  // Show audio section with progress
-  const audioSection = document.getElementById('audioSection');
-  const audioProgress = document.getElementById('audioProgress');
-  const audioPlayerWrap = document.getElementById('audioPlayerWrap');
-  const audioError = document.getElementById('audioError');
-  const progressFill = document.getElementById('audioProgressFill');
-  const progressLabel = document.getElementById('audioProgressLabel');
+  // Show progress
+  btn.disabled = true;
+  btn.textContent = 'Wird vertont...';
+  audioArea.style.display = 'block';
+  audioArea.innerHTML = `
+    <div class="section-audio-progress">
+      <div class="section-audio-bar"><div class="section-audio-fill" id="elFill${idx}"></div></div>
+      <span class="section-audio-label" id="elLabel${idx}">Verbinde...</span>
+    </div>`;
 
-  audioSection.style.display = 'block';
-  audioProgress.style.display = 'block';
-  audioPlayerWrap.style.display = 'none';
-  audioError.style.display = 'none';
-  progressFill.style.width = '0%';
-  progressLabel.textContent = 'Verbinde mit ElevenLabs...';
-
-  // ElevenLabs has a 5000 char limit per request — split if needed
+  const rawText = bodyEl.textContent;
+  const ttsText = prepareSectionForTTS(rawText);
   const chunks = splitTextForTTS(ttsText, 4800);
   const audioBlobs = [];
 
   try {
+    const fill = document.getElementById(`elFill${idx}`);
+    const label = document.getElementById(`elLabel${idx}`);
+
     for (let i = 0; i < chunks.length; i++) {
       const pct = Math.round(((i) / chunks.length) * 90);
-      progressFill.style.width = `${pct}%`;
-      progressLabel.textContent = chunks.length > 1
-        ? `Teil ${i + 1} von ${chunks.length} wird vertont...`
+      fill.style.width = `${pct}%`;
+      label.textContent = chunks.length > 1
+        ? `Teil ${i + 1}/${chunks.length}...`
         : 'Wird vertont...';
 
       const res = await elevenLabsFetch(`/text-to-speech/${voiceId}`, {
@@ -2243,7 +2489,7 @@ async function generateTTS() {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
           text: chunks[i],
-          model_id: 'eleven_multilingual_v2',
+          model_id: 'eleven_v3',
           voice_settings: {
             stability: 0.5,
             similarity_boost: 0.75,
@@ -2257,38 +2503,53 @@ async function generateTTS() {
       audioBlobs.push(blob);
     }
 
-    progressFill.style.width = '95%';
-    progressLabel.textContent = 'Audio wird zusammengesetzt...';
-
-    // Combine all audio blobs
     const finalBlob = new Blob(audioBlobs, { type: 'audio/mpeg' });
     const audioUrl = URL.createObjectURL(finalBlob);
 
-    // Set up player
-    const player = document.getElementById('audioPlayer');
-    player.src = audioUrl;
-
-    const downloadLink = document.getElementById('audioDownload');
     const topic = appState.currentIdea ? appState.currentIdea.topic : 'voiceover';
-    const filename = `${topic.toLowerCase().replace(/[^a-zäöüß0-9]+/g, '-')}.mp3`;
-    downloadLink.href = audioUrl;
-    downloadLink.download = filename;
+    const secLabel = bodyEl.closest('.voiceover-part')
+      ?.querySelector('.voiceover-part-label')?.textContent || `teil-${idx}`;
+    const filename = `${topic.toLowerCase().replace(/[^a-zäöüß0-9]+/g, '-')}-${secLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.mp3`;
 
-    progressFill.style.width = '100%';
-    progressLabel.textContent = 'Fertig!';
+    audioArea.innerHTML = `
+      <div class="section-audio-player">
+        <audio src="${audioUrl}" controls></audio>
+        <a class="section-audio-download" href="${audioUrl}" download="${escapeHtml(filename)}">MP3</a>
+      </div>`;
 
-    setTimeout(() => {
-      audioProgress.style.display = 'none';
-      audioPlayerWrap.style.display = 'block';
-    }, 500);
-
-    showToast('Voiceover generiert!', 'success');
+    btn.textContent = 'Erneut vertonen';
+    btn.disabled = false;
+    showToast(`${secLabel} vertont`, 'success');
   } catch (err) {
-    audioProgress.style.display = 'none';
-    audioError.style.display = 'block';
-    audioError.textContent = err.message;
+    audioArea.innerHTML = `<span style="color:var(--decline);font-size:0.75rem;">${escapeHtml(err.message)}</span>`;
+    btn.textContent = 'Vertonen';
+    btn.disabled = false;
     showToast(err.message, 'error');
   }
+}
+
+function prepareSectionForTTS(text) {
+  let result = text;
+
+  // Keep v3 audio tags, remove other bracket content
+  const V3_AUDIO_TAGS = new Set([
+    'whispers','sighs','laughs','chuckles','excited','sarcastic',
+    'curious','serious','dramatically','crying','snorts',
+    'exhales','giggles','gasps','mischievously',
+  ]);
+  result = result.replace(/\[([^\]]*)\]/g, (match, inner) => {
+    const tag = inner.trim().toLowerCase();
+    return V3_AUDIO_TAGS.has(tag) ? match : '';
+  });
+
+  // Remove HTML/XML tags
+  result = result.replace(/<[^>]+>/g, '');
+
+  // Clean whitespace
+  result = result.replace(/\n{3,}/g, '\n\n');
+  result = result.replace(/  +/g, ' ');
+
+  return result.trim();
 }
 
 function splitTextForTTS(text, maxLen) {
@@ -3000,6 +3261,33 @@ function renderIdeen() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   ELEVENLABS TAG HIGHLIGHTING
+   ═══════════════════════════════════════════════════════════════ */
+function highlightElevenLabsTags(escapedHtml) {
+  let result = escapedHtml;
+
+  // Highlight v3 audio tags: [whispers], [sighs], [excited], etc.
+  result = result.replace(
+    /\[(whispers|sighs|laughs|chuckles|excited|sarcastic|curious|serious|dramatically|crying|snorts|exhales|giggles|gasps|mischievously)\]/gi,
+    '<span class="el-tag-emotion">[$1]</span>'
+  );
+
+  // Highlight GROSSBUCHSTABEN words (2+ consecutive uppercase letters)
+  result = result.replace(
+    /\b([A-ZÄÖÜ]{2,})\b/g,
+    '<span class="el-tag-caps">$1</span>'
+  );
+
+  // Highlight ... ellipses (pause markers)
+  result = result.replace(
+    /\.{3}/g,
+    '<span class="el-tag-pause">...</span>'
+  );
+
+  return result;
+}
+
+/* ═══════════════════════════════════════════════════════════════
    SCRIPT MODAL LOGIC
    ═══════════════════════════════════════════════════════════════ */
 function openScriptModal(ideaIndex) {
@@ -3080,11 +3368,33 @@ function renderScriptContent(scriptRecord) {
   // Titel
   document.getElementById('scriptTitles').textContent = scriptRecord.titles;
 
+  // Quell-Videos (Vorlage)
+  const sourceSection = document.getElementById('scriptSourceSection');
+  const sourcesContainer = document.getElementById('scriptSources');
+  if (idea && idea.sourceVideos && idea.sourceVideos.length > 0) {
+    sourceSection.style.display = 'block';
+    const sourceLinks = idea.sourceVideos
+      .slice(0, 5)
+      .map(v => {
+        const url = `https://www.youtube.com/watch?v=${v.id}`;
+        const views = formatCompact(v.views);
+        return `<a class="source-video-link" href="${url}" target="_blank" rel="noopener">
+          <span class="source-video-title">${escapeHtml(v.title)}</span>
+          <span class="source-video-meta">${escapeHtml(v.channelName)} · ${views} Views</span>
+        </a>`;
+      })
+      .join('');
+    sourcesContainer.innerHTML = sourceLinks;
+  } else {
+    sourceSection.style.display = 'none';
+  }
+
   // Voiceover-Abschnitte
   const voContainer = document.getElementById('voiceoverSections');
-  const sectionCards = sections.map((sec, idx) => {
-    const secId = `voSection${idx}`;
-    const estSec = Math.round((sec.wordCount / 130) * 60);
+  const englishSections = scriptRecord.englishSections || [];
+
+  const buildCard = (sec, secId, wpm, wordLabel) => {
+    const estSec = Math.round((sec.wordCount / wpm) * 60);
     const estLabel = estSec >= 60
       ? `${Math.floor(estSec / 60)}:${String(estSec % 60).padStart(2, '0')} Min.`
       : `${estSec} Sek.`;
@@ -3093,44 +3403,96 @@ function renderScriptContent(scriptRecord) {
       <div class="voiceover-part-header">
         <span class="voiceover-part-label">${escapeHtml(sec.label)}</span>
         <div style="display:flex;align-items:center;gap:calc(var(--unit) * 2);">
-          <span class="voiceover-part-meta">${sec.wordCount} Wörter ~ ${estLabel}</span>
+          <span class="voiceover-part-meta">${sec.wordCount} ${wordLabel} ~ ${estLabel}</span>
           <button class="script-copy-btn" onclick="copySection('${secId}')">Kopieren</button>
         </div>
       </div>
       <div class="voiceover-part-body" id="${secId}">${escapeHtml(sec.body)}</div>
     </div>`;
+  };
+
+  // Side-by-side DE/EN grid — paired by section index
+  const maxSections = Math.max(sections.length, englishSections.length);
+  let bilingualRows = '';
+  for (let i = 0; i < maxSections; i++) {
+    const deCard = i < sections.length
+      ? buildCard(sections[i], `voSection${i}`, 130, 'Wörter')
+      : '';
+    const enCard = i < englishSections.length
+      ? buildCard(englishSections[i], `enSection${i}`, 150, 'words')
+      : '';
+    bilingualRows += `${deCard}${enCard}`;
+  }
+
+  // ElevenLabs-Abschnitte mit hervorgehobenen Tags + TTS pro Abschnitt
+  const hasElevenLabs = !!getElevenLabsKey();
+  const elSectionCards = sections.map((sec, idx) => {
+    const secId = `elSection${idx}`;
+    const highlighted = highlightElevenLabsTags(escapeHtml(sec.body));
+    const ttsBtn = hasElevenLabs
+      ? `<button class="section-tts-btn" id="elTtsBtn${idx}" onclick="generateSectionTTS(${idx})">Vertonen</button>`
+      : '';
+    return `<div class="voiceover-part" id="elPart${idx}">
+      <div class="voiceover-part-header">
+        <span class="voiceover-part-label">${escapeHtml(sec.label)}</span>
+        <div style="display:flex;align-items:center;gap:calc(var(--unit) * 2);">
+          <span class="voiceover-part-meta elevenlabs-badge">ElevenLabs</span>
+          ${ttsBtn}
+          <button class="script-copy-btn" onclick="copySection('${secId}')">Kopieren</button>
+        </div>
+      </div>
+      <div class="voiceover-part-body elevenlabs-body" id="${secId}">${highlighted}</div>
+      <div class="section-audio" id="elAudio${idx}" style="display:none;"></div>
+    </div>`;
   }).join('');
 
-  voContainer.innerHTML = `
+  let html = `
+    <div class="script-section">
+      <div class="bilingual-grid">
+        <div>
+          <div class="bilingual-col-label">
+            <span>Voiceover — Deutsch</span>
+            <button class="script-copy-btn" onclick="copyAllSections('voSection')">Alles kopieren</button>
+          </div>
+        </div>
+        <div>
+          <div class="bilingual-col-label">
+            <span>Voiceover — English</span>
+            <button class="script-copy-btn" onclick="copyAllSections('enSection')">Alles kopieren</button>
+          </div>
+        </div>
+        ${bilingualRows}
+      </div>
+    </div>`;
+
+  html += `
     <div class="script-section">
       <div class="script-section-header">
-        <span class="script-section-label">Voiceover-Abschnitte</span>
-        <button class="script-copy-btn" onclick="copyAllSections()">Alles kopieren</button>
+        <span class="script-section-label">ElevenLabs — mit Tags</span>
+        <button class="script-copy-btn" onclick="copyAllSections('elSection')">Alles kopieren</button>
       </div>
-      ${sectionCards}
+      ${elSectionCards}
     </div>`;
+
+  voContainer.innerHTML = html;
 
   // Verstecktes Gesamtskript für TTS
   document.getElementById('scriptTextHidden').textContent = scriptRecord.script;
-
-  // TTS Button
-  const btnTTS = document.getElementById('btnTTS');
-  btnTTS.style.display = getElevenLabsKey() ? 'inline-flex' : 'none';
-
-  // Reset audio section
-  document.getElementById('audioSection').style.display = 'none';
-  document.getElementById('audioPlayerWrap').style.display = 'none';
-  document.getElementById('audioProgress').style.display = 'none';
-  document.getElementById('audioError').style.display = 'none';
 }
 
 function closeScriptModal() {
-  // Release audio blob URL if any
-  const player = document.getElementById('audioPlayer');
-  if (player.src && player.src.startsWith('blob:')) {
-    URL.revokeObjectURL(player.src);
-    player.src = '';
-  }
+  // Release all section audio blob URLs
+  document.querySelectorAll('.section-audio-player audio').forEach(player => {
+    if (player.src && player.src.startsWith('blob:')) {
+      URL.revokeObjectURL(player.src);
+      player.src = '';
+    }
+  });
+  document.querySelectorAll('.section-audio-download').forEach(link => {
+    if (link.href && link.href.startsWith('blob:')) {
+      URL.revokeObjectURL(link.href);
+    }
+  });
   document.getElementById('scriptOverlay').classList.remove('active');
   updateState({ currentIdea: null });
 }
@@ -3150,16 +3512,21 @@ function regenerateScript() {
   runScriptGeneration(idea);
 }
 
-function copyAllSections() {
+function copyAllSections(prefix) {
   const container = document.getElementById('voiceoverSections');
   if (!container) return;
-  const parts = container.querySelectorAll('.voiceover-part-body');
-  const labels = container.querySelectorAll('.voiceover-part-label');
+
+  const allParts = container.querySelectorAll('.voiceover-part');
   const lines = [];
-  parts.forEach((part, i) => {
-    const label = labels[i] ? labels[i].textContent : `Teil ${i + 1}`;
-    lines.push(`[${label}]\n${part.textContent}\n`);
+
+  allParts.forEach(part => {
+    const bodyEl = part.querySelector('.voiceover-part-body');
+    const labelEl = part.querySelector('.voiceover-part-label');
+    if (!bodyEl || !bodyEl.id.startsWith(prefix)) return;
+    const label = labelEl ? labelEl.textContent : 'Teil';
+    lines.push(`[${label}]\n${bodyEl.textContent}\n`);
   });
+
   const text = lines.join('\n');
   navigator.clipboard.writeText(text).then(() => {
     showToast('Gesamtes Skript kopiert', 'success');
@@ -3187,6 +3554,23 @@ function copySection(elementId) {
     document.body.removeChild(textarea);
     showToast('In Zwischenablage kopiert', 'success');
   });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PDF EXPORT
+   ═══════════════════════════════════════════════════════════════ */
+function exportScriptPDF() {
+  const topic = appState.currentIdea ? appState.currentIdea.topic : 'skript';
+  const filename = topic.toLowerCase().replace(/[^a-zäöüß0-9]+/g, '-');
+
+  // Set document title for PDF filename
+  const origTitle = document.title;
+  document.title = `${filename}-export`;
+
+  window.print();
+
+  // Restore title after print dialog
+  setTimeout(() => { document.title = origTitle; }, 1000);
 }
 
 /* ═══════════════════════════════════════════════════════════════
