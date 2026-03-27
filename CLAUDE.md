@@ -59,17 +59,20 @@ Basiert auf Extinct Zoo / Eclesso Referenzkanälen:
 
 ### Skript-Export Format
 - **Übersichtstabelle:** Thema, Wörter, Dauer, Abschnitte, Quell-Videos, Views
-- **Voiceover-Abschnitte:** Hook, Intro, Kapitel 1-3, Fazit — jeweils einzeln kopierbar mit Wortzahl + Dauer
-- **Alles-kopieren** für Gesamtskript
+- **Bilingual-Grid:** Deutsche und englische Voiceover-Abschnitte nebeneinander (Hook, Intro, Kapitel 1-3, Fazit)
+- **ElevenLabs-Abschnitte:** Skript mit hervorgehobenen Audio-Tags (Emotions, Betonung, Pausen)
+- **PDF Export:** Druckoptimiertes Layout mit Print-Stylesheet
+- **Alles-kopieren** pro Spalte (DE / EN / ElevenLabs)
 
 ### ElevenLabs Integration
-- Modell: `eleven_multilingual_v2`
+- Modell: `eleven_v3`
 - Voice Settings: Stability 0.5, Similarity 0.75, Style 0.4, Speaker Boost on
 - Tag-Palette (im Skript-Prompt eingebaut):
+  - `[whispers]`, `[sighs]`, `[laughs]`, `[excited]`, `[sarcastic]`, `[curious]`, `[serious]`, `[dramatically]` → v3 Audio-Tags für Emotions-Steuerung
   - `GROSSBUCHSTABEN` → Betonung (sparsam, 2-3 pro Absatz)
   - `...` Ellipsen → natürliche Denkpausen
-  - `<break time="1.0s" />` → nur zwischen Kapiteln (max 5, gekappt auf 1.5s)
-- TTS-Vorbereitung: entfernt Kapitelüberschriften, Markdown, begrenzt Breaks
+  - Keine `<break>` Tags — v3 nutzt Interpunktion für Pausen
+- TTS-Vorbereitung: entfernt Kapitelüberschriften, Markdown, behält Audio-Tags
 - Chunking bei >4.800 Zeichen (Split an Absatz/Satz-Grenzen)
 - Audio: Player im Modal + MP3-Download
 
