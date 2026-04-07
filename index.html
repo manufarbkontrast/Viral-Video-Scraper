@@ -956,6 +956,12 @@ body {
   gap: calc(var(--unit) * 2);
 }
 
+.voiceover-part-empty {
+  border: 1px dashed var(--reef);
+  background: transparent;
+  opacity: 0.3;
+}
+
 .bilingual-col-label {
   font-size: 0.7rem;
   font-weight: 600;
@@ -2348,7 +2354,8 @@ async function elevenLabsFetch(endpoint, options = {}) {
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    const errMsg = body?.detail?.message || body?.detail || `HTTP ${res.status}`;
+    let errMsg = body?.detail?.message || body?.detail || body?.message || `HTTP ${res.status}`;
+    if (typeof errMsg !== 'string') errMsg = JSON.stringify(errMsg);
     if (res.status === 401) throw new Error('Ungültiger ElevenLabs API Key.');
     if (res.status === 429) throw new Error('ElevenLabs Rate Limit erreicht. Bitte kurz warten.');
     throw new Error(`ElevenLabs Fehler: ${errMsg}`);
@@ -2391,7 +2398,7 @@ async function loadElevenLabsVoices() {
       .map(v => {
         const label = `${v.name} (${v.labels?.accent || v.labels?.gender || 'custom'})`;
         const selected = v.voice_id === defaultVoice ? ' selected' : '';
-        return `<option value="${v.voice_id}"${selected}>${escapeHtml(label)}</option>`;
+        return `<option value="${escapeHtml(v.voice_id)}"${selected}>${escapeHtml(label)}</option>`;
       })
       .join('');
 
@@ -2457,6 +2464,7 @@ async function generateSectionTTS(idx) {
 
   const btn = document.getElementById(`elTtsBtn${idx}`);
   const audioArea = document.getElementById(`elAudio${idx}`);
+  if (!btn || !audioArea) return;
 
   // Show progress
   btn.disabled = true;
@@ -2470,14 +2478,29 @@ async function generateSectionTTS(idx) {
 
   const rawText = bodyEl.textContent;
   const ttsText = prepareSectionForTTS(rawText);
+
+  if (!ttsText) {
+    audioArea.innerHTML = `<span style="color:var(--decline);font-size:0.75rem;">Leerer Sprechtext — nichts zu vertonen.</span>`;
+    btn.textContent = 'Vertonen';
+    btn.disabled = false;
+    return;
+  }
+
   const chunks = splitTextForTTS(ttsText, 4800);
   const audioBlobs = [];
 
-  try {
-    const fill = document.getElementById(`elFill${idx}`);
-    const label = document.getElementById(`elLabel${idx}`);
+  // Capture the topic at the start so it doesn't change if user navigates
+  const topic = appState.currentIdea ? appState.currentIdea.topic : 'voiceover';
+  const secLabel = bodyEl.closest('.voiceover-part')
+    ?.querySelector('.voiceover-part-label')?.textContent || `teil-${idx}`;
 
+  try {
     for (let i = 0; i < chunks.length; i++) {
+      // Abort if the target DOM elements have been removed (modal closed/rerendered)
+      const fill = document.getElementById(`elFill${idx}`);
+      const label = document.getElementById(`elLabel${idx}`);
+      if (!fill || !label) return;
+
       const pct = Math.round(((i) / chunks.length) * 90);
       fill.style.width = `${pct}%`;
       label.textContent = chunks.length > 1
@@ -2503,27 +2526,37 @@ async function generateSectionTTS(idx) {
       audioBlobs.push(blob);
     }
 
+    // Re-check DOM before mutating — may have been cleaned up during async work
+    const currentArea = document.getElementById(`elAudio${idx}`);
+    const currentBtn = document.getElementById(`elTtsBtn${idx}`);
+    if (!currentArea || !currentBtn) return;
+
     const finalBlob = new Blob(audioBlobs, { type: 'audio/mpeg' });
     const audioUrl = URL.createObjectURL(finalBlob);
 
-    const topic = appState.currentIdea ? appState.currentIdea.topic : 'voiceover';
-    const secLabel = bodyEl.closest('.voiceover-part')
-      ?.querySelector('.voiceover-part-label')?.textContent || `teil-${idx}`;
-    const filename = `${topic.toLowerCase().replace(/[^a-zäöüß0-9]+/g, '-')}-${secLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.mp3`;
+    const baseName = topic.toLowerCase().replace(/[^a-zäöüß0-9]+/g, '-');
+    const sectionName = secLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-') || `teil-${idx}`;
+    const filename = `${baseName}-${sectionName}.mp3`;
 
-    audioArea.innerHTML = `
+    currentArea.innerHTML = `
       <div class="section-audio-player">
         <audio src="${audioUrl}" controls></audio>
         <a class="section-audio-download" href="${audioUrl}" download="${escapeHtml(filename)}">MP3</a>
       </div>`;
 
-    btn.textContent = 'Erneut vertonen';
-    btn.disabled = false;
+    currentBtn.textContent = 'Erneut vertonen';
+    currentBtn.disabled = false;
     showToast(`${secLabel} vertont`, 'success');
   } catch (err) {
-    audioArea.innerHTML = `<span style="color:var(--decline);font-size:0.75rem;">${escapeHtml(err.message)}</span>`;
-    btn.textContent = 'Vertonen';
-    btn.disabled = false;
+    const currentArea = document.getElementById(`elAudio${idx}`);
+    const currentBtn = document.getElementById(`elTtsBtn${idx}`);
+    if (currentArea) {
+      currentArea.innerHTML = `<span style="color:var(--decline);font-size:0.75rem;">${escapeHtml(err.message)}</span>`;
+    }
+    if (currentBtn) {
+      currentBtn.textContent = 'Vertonen';
+      currentBtn.disabled = false;
+    }
     showToast(err.message, 'error');
   }
 }
@@ -3264,25 +3297,38 @@ function renderIdeen() {
    ELEVENLABS TAG HIGHLIGHTING
    ═══════════════════════════════════════════════════════════════ */
 function highlightElevenLabsTags(escapedHtml) {
-  let result = escapedHtml;
+  // Strip any existing null bytes to prevent placeholder collisions
+  let result = escapedHtml.replace(/\x00/g, '');
 
-  // Highlight v3 audio tags: [whispers], [sighs], [excited], etc.
+  // Use null-byte-wrapped placeholders so they cannot collide with normal text
+  const placeholders = [];
+  const stash = (replacement) => {
+    const key = `\x00\x01${placeholders.length}\x01\x00`;
+    placeholders.push(replacement);
+    return key;
+  };
+
+  // 1. Stash v3 audio tags first: [whispers], [SIGHS], etc. (case-insensitive)
   result = result.replace(
     /\[(whispers|sighs|laughs|chuckles|excited|sarcastic|curious|serious|dramatically|crying|snorts|exhales|giggles|gasps|mischievously)\]/gi,
-    '<span class="el-tag-emotion">[$1]</span>'
+    (_, tag) => stash(`<span class="el-tag-emotion">[${tag}]</span>`)
   );
 
-  // Highlight GROSSBUCHSTABEN words (2+ consecutive uppercase letters)
+  // 2. Stash GROSSBUCHSTABEN words (2+ consecutive uppercase incl. umlauts)
+  // Use lookbehind/lookahead instead of \b because \b doesn't handle non-ASCII letters
   result = result.replace(
-    /\b([A-ZÄÖÜ]{2,})\b/g,
-    '<span class="el-tag-caps">$1</span>'
+    /(?<![A-Za-zÄÖÜäöüß])([A-ZÄÖÜ]{2,})(?![A-Za-zÄÖÜäöüß])/g,
+    (_, word) => stash(`<span class="el-tag-caps">${word}</span>`)
   );
 
-  // Highlight ... ellipses (pause markers)
+  // 3. Stash ellipses (pause markers)
   result = result.replace(
     /\.{3}/g,
-    '<span class="el-tag-pause">...</span>'
+    () => stash('<span class="el-tag-pause">...</span>')
   );
+
+  // 4. Restore placeholders
+  result = result.replace(/\x00\x01(\d+)\x01\x00/g, (_, i) => placeholders[Number(i)] || '');
 
   return result;
 }
@@ -3342,6 +3388,9 @@ function renderScriptContent(scriptRecord) {
   const loading = document.getElementById('scriptLoading');
   const result = document.getElementById('scriptResult');
 
+  // Release any existing blob URLs from previous render to prevent memory leaks
+  releaseSectionAudioBlobs();
+
   loading.style.display = 'none';
   result.style.display = 'block';
 
@@ -3352,7 +3401,7 @@ function renderScriptContent(scriptRecord) {
   const idea = appState.currentIdea;
 
   const tableRows = [
-    ['Thema', escapeHtml(scriptRecord.topic)],
+    ['Thema', escapeHtml(scriptRecord.topic || '--')],
     ['Wörter', `${wc.toLocaleString('de-DE')}`],
     ['Geschätzte Dauer', `~${estMinutes} Min.`],
     ['Abschnitte', `${sections.length}`],
@@ -3366,14 +3415,15 @@ function renderScriptContent(scriptRecord) {
   ).join('');
 
   // Titel
-  document.getElementById('scriptTitles').textContent = scriptRecord.titles;
+  document.getElementById('scriptTitles').textContent = scriptRecord.titles || '';
 
   // Quell-Videos (Vorlage)
   const sourceSection = document.getElementById('scriptSourceSection');
   const sourcesContainer = document.getElementById('scriptSources');
+  sourcesContainer.innerHTML = '';
   if (idea && idea.sourceVideos && idea.sourceVideos.length > 0) {
     sourceSection.style.display = 'block';
-    const sourceLinks = idea.sourceVideos
+    sourcesContainer.innerHTML = idea.sourceVideos
       .slice(0, 5)
       .map(v => {
         const url = `https://www.youtube.com/watch?v=${v.id}`;
@@ -3384,7 +3434,6 @@ function renderScriptContent(scriptRecord) {
         </a>`;
       })
       .join('');
-    sourcesContainer.innerHTML = sourceLinks;
   } else {
     sourceSection.style.display = 'none';
   }
@@ -3412,15 +3461,17 @@ function renderScriptContent(scriptRecord) {
   };
 
   // Side-by-side DE/EN grid — paired by section index
+  // Always emit 2 grid cells per row so columns stay aligned even if one side is missing
   const maxSections = Math.max(sections.length, englishSections.length);
+  const emptyCell = '<div class="voiceover-part voiceover-part-empty"></div>';
   let bilingualRows = '';
   for (let i = 0; i < maxSections; i++) {
     const deCard = i < sections.length
       ? buildCard(sections[i], `voSection${i}`, 130, 'Wörter')
-      : '';
+      : emptyCell;
     const enCard = i < englishSections.length
       ? buildCard(englishSections[i], `enSection${i}`, 150, 'words')
-      : '';
+      : emptyCell;
     bilingualRows += `${deCard}${enCard}`;
   }
 
@@ -3477,22 +3528,27 @@ function renderScriptContent(scriptRecord) {
   voContainer.innerHTML = html;
 
   // Verstecktes Gesamtskript für TTS
-  document.getElementById('scriptTextHidden').textContent = scriptRecord.script;
+  document.getElementById('scriptTextHidden').textContent = scriptRecord.script || '';
 }
 
-function closeScriptModal() {
-  // Release all section audio blob URLs
-  document.querySelectorAll('.section-audio-player audio').forEach(player => {
+function releaseSectionAudioBlobs() {
+  const container = document.getElementById('voiceoverSections');
+  if (!container) return;
+  container.querySelectorAll('.section-audio-player audio').forEach(player => {
     if (player.src && player.src.startsWith('blob:')) {
       URL.revokeObjectURL(player.src);
       player.src = '';
     }
   });
-  document.querySelectorAll('.section-audio-download').forEach(link => {
+  container.querySelectorAll('.section-audio-download').forEach(link => {
     if (link.href && link.href.startsWith('blob:')) {
       URL.revokeObjectURL(link.href);
     }
   });
+}
+
+function closeScriptModal() {
+  releaseSectionAudioBlobs();
   document.getElementById('scriptOverlay').classList.remove('active');
   updateState({ currentIdea: null });
 }
@@ -3561,16 +3617,23 @@ function copySection(elementId) {
    ═══════════════════════════════════════════════════════════════ */
 function exportScriptPDF() {
   const topic = appState.currentIdea ? appState.currentIdea.topic : 'skript';
-  const filename = topic.toLowerCase().replace(/[^a-zäöüß0-9]+/g, '-');
+  const filename = topic.toLowerCase().replace(/[^a-zäöüß0-9]+/g, '-') || 'skript';
 
   // Set document title for PDF filename
   const origTitle = document.title;
   document.title = `${filename}-export`;
 
+  // Restore title after print dialog closes
+  const restore = () => {
+    document.title = origTitle;
+    window.removeEventListener('afterprint', restore);
+  };
+  window.addEventListener('afterprint', restore);
+
   window.print();
 
-  // Restore title after print dialog
-  setTimeout(() => { document.title = origTitle; }, 1000);
+  // Fallback in case afterprint doesn't fire (e.g., user cancels in some browsers)
+  setTimeout(restore, 3000);
 }
 
 /* ═══════════════════════════════════════════════════════════════
